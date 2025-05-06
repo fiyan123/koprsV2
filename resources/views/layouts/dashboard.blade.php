@@ -126,7 +126,7 @@
                         </div>
                         <div class="p-5 pt-0">
                             <h5 class="text-uppercase mb-3">Nama Gerakan</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur tellus augue.</p>
+                            <p>Detail Deskripsi Dari Gerakan.</p>
                             <a class="position-relative text-body text-uppercase small d-flex justify-content-between"
                                 href="#"><b class="bg-white pe-3">Read More</b> <i
                                     class="bi bi-arrow-right bg-white ps-3"></i></a>
@@ -140,7 +140,7 @@
                         </div>
                         <div class="p-5 pt-0">
                             <h5 class="text-uppercase mb-3">Nama Gerakan</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur tellus augue.</p>
+                            <p>Detail Deskripsi Dari Gerakan.</p>
                             <a class="position-relative text-body text-uppercase small d-flex justify-content-between"
                                 href="#"><b class="bg-white pe-3">Read More</b> <i
                                     class="bi bi-arrow-right bg-white ps-3"></i></a>
@@ -154,7 +154,7 @@
                         </div>
                         <div class="p-5 pt-0">
                             <h5 class="text-uppercase mb-3">Nama Gerakan</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur tellus augue.</p>
+                            <p>Detail Deskripsi Dari Gerakan.</p>
                             <a class="position-relative text-body text-uppercase small d-flex justify-content-between"
                                 href="#"><b class="bg-white pe-3">Read More</b> <i
                                     class="bi bi-arrow-right bg-white ps-3"></i></a>
@@ -168,7 +168,7 @@
                         </div>
                         <div class="p-5 pt-0">
                             <h5 class="text-uppercase mb-3">Nama Gerakan</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur tellus augue.</p>
+                            <p>Detail Deskripsi Dari Gerakan.</p>
                             <a class="position-relative text-body text-uppercase small d-flex justify-content-between"
                                 href="#"><b class="bg-white pe-3">Read More</b> <i
                                     class="bi bi-arrow-right bg-white ps-3"></i></a>
@@ -190,7 +190,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-1.jpg') }}"
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}"
                                 alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Jabatan Organisasi</h4>
@@ -202,7 +202,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-2.jpg') }}"
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}"
                                 alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Jabatan Organisasi</h4>
@@ -214,7 +214,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-3.jpg') }}"
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}"
                                 alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Jabatan Organisasi</h4>
@@ -226,7 +226,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.4s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-4.jpg') }}"
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}"
                                 alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Jabatan Organisasi</h4>
@@ -238,7 +238,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-5.jpg') }}"
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}"
                                 alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Jabatan Organisasi</h4>
@@ -250,7 +250,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-6.jpg') }}"
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}"
                                 alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Jabatan Organisasi</h4>
@@ -262,7 +262,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-7.jpg') }}"
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}"
                                 alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Jabatan Organisasi</h4>
@@ -274,7 +274,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.4s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-8.jpg') }}"
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}"
                                 alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Jabatan Organisasi</h4>

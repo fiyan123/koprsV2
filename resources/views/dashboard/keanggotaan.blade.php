@@ -57,22 +57,22 @@
                     <h1 class="display-6 text-uppercase mb-4">Mitra Kerjasama</h1>
                     <div class="row g-5">
                         <div class="col-4">
-                            <img class="img-fluid" src="{{ asset('assets/img/service-1.jpg') }}" alt="">
+                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
                         </div>
                         <div class="col-4">
-                            <img class="img-fluid" src="{{ asset('assets/img/service-2.jpg') }}" alt="">
+                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
                         </div>
                         <div class="col-4">
-                            <img class="img-fluid" src="{{ asset('assets/img/service-3.jpg') }}" alt="">
+                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
                         </div>
                         <div class="col-4">
-                            <img class="img-fluid" src="{{ asset('assets/img/service-4.jpg') }}" alt="">
+                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
                         </div>
                         <div class="col-4">
-                            <img class="img-fluid" src="{{ asset('assets/img/service-5.jpg') }}" alt="">
+                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
                         </div>
                         <div class="col-4">
-                            <img class="img-fluid" src="{{ asset('assets/img/service-6.jpg') }}" alt="">
+                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
                         </div>
                     </div>
                 </div>

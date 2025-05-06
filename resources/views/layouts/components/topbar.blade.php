@@ -2,7 +2,7 @@
     <div class="container py-3">
         <div class="d-flex align-items-center">
             <a href="{{ route('dashboard') }}">
-                <img src="{{ asset('assets/Logo-Koperasi.png') }}" alt="" width="75px">
+                <img src="{{ asset('assets/Logo_Full.png') }}" alt="" width="100px" height="auto">
             </a>
             <div class="ms-auto d-flex align-items-center">
                 <small class="ms-4"><i class="fa fa-map-marker-alt me-3"></i>Nama Alamat Lengkap</small>

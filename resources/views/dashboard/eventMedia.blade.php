@@ -33,7 +33,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-1.jpg') }}" alt="">
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Nama Event</h4>
                                     <p>deskripsi singkat</p>
@@ -44,7 +44,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-2.jpg') }}" alt="">
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Nama Event</h4>
                                     <p>deskripsi singkat</p>
@@ -55,7 +55,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-3.jpg') }}" alt="">
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Nama Event</h4>
                                     <p>deskripsi singkat</p>
@@ -66,7 +66,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.4s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-4.jpg') }}" alt="">
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Nama Event</h4>
                                     <p>deskripsi singkat</p>
@@ -77,7 +77,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-5.jpg') }}" alt="">
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Nama Event</h4>
                                     <p>deskripsi singkat</p>
@@ -88,7 +88,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-6.jpg') }}" alt="">
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Nama Event</h4>
                                     <p>deskripsi singkat</p>
@@ -99,7 +99,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-7.jpg') }}" alt="">
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Nama Event</h4>
                                     <p>deskripsi singkat</p>
@@ -110,7 +110,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.4s">
                     <div class="service-item">
                         <div class="service-inner pb-5">
-                            <img class="img-fluid w-100" src="{{ asset('assets/img/service-8.jpg') }}" alt="">
+                            <img class="img-fluid w-100" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
                             <div class="service-text px-5 pt-4">
                                 <h5 class="text-uppercase">Nama Event</h4>
                                     <p>deskripsi singkat</p>

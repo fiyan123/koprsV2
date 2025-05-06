@@ -2,7 +2,7 @@
     <div class="container">
         <nav class="navbar navbar-expand-lg bg-white navbar-light p-lg-0">
             <a href="{{ route('dashboard') }}" class="navbar-brand d-lg-none">
-                <img src="{{ asset('assets/Logo-Koperasi.png') }}" alt="" width="80px">
+                <img src="{{ asset('assets/Logo_Full.png') }}" alt="" width="100px" height="auto">
             </a>
             <button type="button" class="navbar-toggler me-0" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="navbar-toggler-icon"></span>
