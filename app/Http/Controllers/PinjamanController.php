@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Pinjaman;
@@ -12,7 +11,7 @@ class PinjamanController extends Controller
      */
     public function index()
     {
-        //
+        return view('admin.pinjam.index');
     }
 
     /**
@@ -20,7 +19,7 @@ class PinjamanController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.pinjam.create');
     }
 
     /**

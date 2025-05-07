@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardUserController;
+use App\Http\Controllers\PinjamanController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,8 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::get('/Pinjam', [PinjamanController::class, 'index'])->name('Pinjam.index');
+Route::get('/Add-Pinjam', [PinjamanController::class, 'create'])->name('Pinjam.create');
 // Route User Dashboard
 Route::get('/dashboard', [DashboardUserController::class, 'index'])->name('dashboard');
 Route::get('/keanggotaan', [DashboardUserController::class, 'indexKeanggotaan'])->name('keanggotaan');

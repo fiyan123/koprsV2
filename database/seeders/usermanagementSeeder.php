@@ -68,7 +68,7 @@ class usermanagementSeeder extends Seeder
                 'password'          => Hash::make('password'),
                 'nip'               => $user['nip'],
                 'alamat'            => 'Bandung',
-                'ktp'               => '327xxxxxxx',
+                'noktp'               => '327xxxxxxx',
                 'tgl_lahir'         => '2000-01-01',
                 'no_hp'             => '08123456789',
                 'foto'              => null,

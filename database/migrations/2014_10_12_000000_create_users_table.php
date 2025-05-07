@@ -18,6 +18,12 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->string('nip')->unique()->nullable();
+            $table->text('alamat')->nullable();
+            $table->string('noktp', 50)->nullable();
+            $table->date('tgl_lahir')->nullable();
+            $table->string('no_hp', 20)->nullable();
+            $table->string('foto')->nullable();
             $table->timestamps();
         });
     }
