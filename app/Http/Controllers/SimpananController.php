@@ -4,20 +4,35 @@ namespace App\Http\Controllers;
 
 use App\Models\Simpanan;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class SimpananController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+
+    public function index(Request $request)
     {
-        //
+        $data = Simpanan::get();
+        if ($request->ajax()) {
+            $dataTable = DataTables::of($data)->addIndexColumn();
+            $dataTable->addColumn('action', function ($row) {
+                $btn = '';
+                $btn = '<div class="d-flex">
+                        <a href="' . route('simpanan.edit', [$row->id]) . '" title="Edit" class="btn btn-primary btn btn-dark">
+                            Edit
+                        </a>
+                        <button type="submit" id="' . $row->id . '" title="Delete" class="delete btn btn-danger">
+                            Hapus 
+                        </button>
+                    </div>';
+
+                return $btn;
+            });
+            return $dataTable->rawColumns(['action', 'registrasi'])->make(true);
+        }
+        return view('admin.simpanan.index', compact('data'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
         //

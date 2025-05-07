@@ -20,6 +20,7 @@
 </head>
 
 <body>
+    @include('sweetalert::alert')
     <div class="container-scroller">
         <div class="container-fluid page-body-wrapper full-page-wrapper">
             <div class="content-wrapper d-flex align-items-center auth px-0">

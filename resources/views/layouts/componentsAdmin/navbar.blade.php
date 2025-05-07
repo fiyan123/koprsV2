@@ -1,10 +1,10 @@
 <!-- partial:partials/_navbar.html -->
 <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
     <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-        <a class="navbar-brand brand-logo mr-5" href="index.html"><img src="{{ asset('assetsAdmin/images/logo.svg') }}"
+        <a class="navbar-brand brand-logo mr-5" href="{{ route('home') }}"><img src="{{ asset('assets/Logo_Full.png') }}"
                 class="mr-2" alt="logo" /></a>
-        <a class="navbar-brand brand-logo-mini" href="index.html"><img
-                src="{{ asset('assetsAdmin/images/logo-mini.svg') }}" alt="logo" /></a>
+        <a class="navbar-brand brand-logo-mini align-items-center justify-content-center" href="{{ route('home') }}"><img
+                src="{{ asset('assets/Logo_New_Juwita.png') }}" alt="logo" /></a>
     </div>
     <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
         <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">

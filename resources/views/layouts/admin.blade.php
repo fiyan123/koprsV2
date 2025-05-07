@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Skydash Admin</title>
+    <title>@yield('title') | {{ config('app.name', 'KOPERASI') }}</title>
 
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{ asset('assetsAdmin/vendors/feather/feather.css') }}">
@@ -22,30 +22,29 @@
     <link rel="stylesheet" href="{{ asset('assetsAdmin/css/vertical-layout-light/style.css') }}">
 
     <!-- endinject -->
-    <link rel="shortcut icon" href="{{ asset('assetsAdmin/images/favicon.png') }}" />
+    <link rel="shortcut icon" href="{{ asset('assets/Logo_New_Juwita.png') }}" />
 </head>
 
 <body>
+    @include('sweetalert::alert')
     <div class="container-scroller">
         @include('layouts.componentsAdmin.navbar')
         <div class="container-fluid page-body-wrapper">
-
             @include('layouts.componentsAdmin.sidebarSkins')
-
             @include('layouts.componentsAdmin.todoList')
-
             @include('layouts.componentsAdmin.sidebar')
-
             <div class="main-panel">
                 <div class="content-wrapper">
-                    <div class="row">
-                        <div class="col-md-12 grid-margin stretch-card">
-                            @yield('content')
-                        </div>
+                    <div class="page-header mb-3">
+                        @yield('breadcrumb')
+                    </div>
+                    <div class="page-content">
+                        @yield('content')
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <script src="{{ asset('assetsAdmin/vendors/js/vendor.bundle.base.js') }}"></script>
@@ -64,6 +63,14 @@
     <!-- Custom js for this page-->
     <script src="{{ asset('assetsAdmin/js/dashboard.js') }}"></script>
     <script src="{{ asset('assetsAdmin/js/Chart.roundedBarCharts.js') }}"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <!-- jQuery (harus di-load duluan) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    @stack('scripts')
 </body>
 
 </html>

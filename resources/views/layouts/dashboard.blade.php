@@ -12,6 +12,7 @@
 </head>
 
 <body>
+    @include('sweetalert::alert')
     <!-- Spinner Start -->
     <div id="spinner"
         class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
@@ -319,7 +320,7 @@
         <div class="container pt-5">
             <div class="row gy-5 gx-0">
                 <div class="col-lg-6 pe-lg-5 wow fadeIn" data-wow-delay="0.3s">
-                    <h1 class="display-6 text-uppercase text-white mb-4">Untuk Bergabung Menjadi Anggota</h1>
+                    <h1 class="display-6 text-uppercase text-white mb-4">Saran Dan Masukkan Umum</h1>
                     <p class="text-white mb-5 wow fadeIn" data-wow-delay="0.4s">Lorem ipsum dolor sit amet,
                         consectetur adipiscing elit. Curabitur tellus
                         augue, iaculis id elit eget, ultrices pulvinar tortor.</p>
@@ -345,7 +346,7 @@
                 </div>
                 <div class="col-lg-6 mb-n5 wow fadeIn" data-wow-delay="0.7s">
                     <div class="bg-white p-5">
-                        <h2 class="text-uppercase mb-4">Daftarkan Diri Anda</h2>
+                        <h2 class="text-uppercase mb-4">Daftar Diri Anda</h2>
                         <div class="row g-3">
                             <div class="col-sm-6">
                                 <div class="form-floating">

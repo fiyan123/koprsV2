@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardMenuController;
 use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\PinjamanController;
+use App\Http\Controllers\SimpananController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +31,9 @@ Route::get('/eventMedia', [DashboardUserController::class, 'indexEventMedia'])->
 Route::middleware('guest')->group(function () {
     Route::get('login', [LoginController::class, 'login'])->name('login');
     Route::post('login', [LoginController::class, 'loginAction'])->name('login.action');
+
+    Route::get('register', [RegisterController::class, 'register'])->name('register');
+    Route::post('register', [RegisterController::class, 'registerAction'])->name('register.action');
 });
 
 Route::post('/logout', function () {
@@ -49,5 +54,15 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
         Route::get('show/{id}', [DashboardMenuController::class, 'show'])->name('home.show');
         Route::patch('update/{id}', [DashboardMenuController::class, 'update'])->name('home.update');
         Route::post('destroy', [DashboardMenuController::class, 'destroy'])->name('home.destroy');
+    });
+
+    Route::group(['prefix' => 'simpanan'], function() {
+        Route::get('/', [SimpananController::class, 'index'])->name('simpanan');
+        Route::get('create', [SimpananController::class, 'create'])->name('simpanan.create');
+        Route::post('store', [SimpananController::class, 'store'])->name('simpanan.store');
+        Route::get('edit/{id}', [SimpananController::class, 'edit'])->name('simpanan.edit');
+        Route::get('show/{id}', [SimpananController::class, 'show'])->name('simpanan.show');
+        Route::patch('update/{id}', [SimpananController::class, 'update'])->name('simpanan.update');
+        Route::post('destroy', [SimpananController::class, 'destroy'])->name('simpanan.destroy');
     });
 });
