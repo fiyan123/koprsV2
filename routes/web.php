@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DashboardMenuController;
 use App\Http\Controllers\DashboardUserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -15,21 +17,32 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/admin', function () {
+Route::get('/admin', function() {
     return view('layouts.admin');
 });
 
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
 // Route User Dashboard
-Route::get('/dashboard', [DashboardUserController::class, 'index'])->name('dashboard');
-Route::get('/keanggotaan', [DashboardUserController::class, 'indexKeanggotaan'])->name('keanggotaan');
-Route::get('/simpanPinjam', [DashboardUserController::class, 'indexSimpanPinjam'])->name('simpanPinjam');
-Route::get('/keunggulan', [DashboardUserController::class, 'indexKeunggulan'])->name('keunggulan');
-Route::get('/eventMedia', [DashboardUserController::class, 'indexEventMedia'])->name('eventMedia');
+Route::get('/', [DashboardUserController::class, 'index'])->name('dashboard');
+ Route::get('/keanggotaan', [DashboardUserController::class, 'indexKeanggotaan'])->name('keanggotaan');
+ Route::get('/simpanPinjam', [DashboardUserController::class, 'indexSimpanPinjam'])->name('simpanPinjam');
+ Route::get('/keunggulan', [DashboardUserController::class, 'indexKeunggulan'])->name('keunggulan');
+ Route::get('/eventMedia', [DashboardUserController::class, 'indexEventMedia'])->name('eventMedia');
+
+Route::middleware('guest')->group(function () {
+    Route::get('login', [LoginController::class, 'login'])->name('login');
+    Route::post('login', [LoginController::class, 'loginAction'])->name('login.action');
+});
+
+Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
+
+    Route::group(['prefix' => 'home'], function() {
+        Route::get('/', [DashboardMenuController::class, 'index'])->name('home');
+        Route::get('create', [DashboardMenuController::class, 'create'])->name('home.create');
+        Route::post('store', [DashboardMenuController::class, 'store'])->name('home.store');
+        Route::get('edit/{id}', [DashboardMenuController::class, 'edit'])->name('home.edit');
+        Route::get('show/{id}', [DashboardMenuController::class, 'show'])->name('home.show');
+        Route::patch('update/{id}', [DashboardMenuController::class, 'update'])->name('home.update');
+        Route::post('destroy', [DashboardMenuController::class, 'destroy'])->name('home.destroy');
+    });
+});
+
