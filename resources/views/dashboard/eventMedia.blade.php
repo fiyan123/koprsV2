@@ -21,7 +21,7 @@
 
     @include('layouts.components.topbar')
     @include('layouts.components.navbarDashboard')
-    @include('layouts.components.carousel')
+    {{-- @include('layouts.components.carousel') --}}
 
     <!-- Struktur Organisasi Start -->
     <div class="container-fluid service pt-6 pb-6" id="strukturOrganisasi">

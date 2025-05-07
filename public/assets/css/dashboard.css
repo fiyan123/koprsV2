@@ -5,3 +5,7 @@
 html {
     scroll-behavior: smooth;
 }
+
+.text-justify {
+    text-align: justify;
+}

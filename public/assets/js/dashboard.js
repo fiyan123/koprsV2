@@ -12,3 +12,14 @@ function overrideActiveForHash() {
 
 window.addEventListener('load', overrideActiveForHash);
 window.addEventListener('hashchange', overrideActiveForHash);
+
+document.addEventListener('DOMContentLoaded', function () {
+    const toggleButton = document.querySelector('.navbar-toggler');
+    const topDashboard = document.querySelector('#topDashboard'); // Pastikan ID ini sesuai
+    const navbarDashboard = document.querySelector('#navbarDashboard');
+
+    toggleButton.addEventListener('click', function () {
+        topDashboard.classList.toggle('show');
+        navbarDashboard.classList.toggle('show');
+    });
+});

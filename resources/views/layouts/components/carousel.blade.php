@@ -16,25 +16,25 @@
             <div class="carousel-item active">
                 <img class="w-100" src="{{ asset('assets/peran-koperasi-untuk-masyarakat.jpg') }}" alt="Image">
                 <div class="carousel-caption">
-                    <h1 class="display-1 text-uppercase text-white mb-4 animated zoomIn">Lorem Ipsum Dolor Sit Amet
+                    <h1 class="display-1 text-uppercase text-white mb-4 animated zoomIn">Koperasi Digital
                     </h1>
-                    <a href="#" class="btn btn-primary py-3 px-4">Learn More</a>
+                    <a href="#" class="btn btn-primary py-3 px-4">Lainnya</a>
                 </div>
             </div>
             <div class="carousel-item">
                 <img class="w-100" src="{{ asset('assets/peran-koperasi-untuk-masyarakat.jpg') }}" alt="Image">
                 <div class="carousel-caption">
-                    <h1 class="display-1 text-uppercase text-white mb-4 animated zoomIn">Lorem Ipsum Dolor Sit Amet
+                    <h1 class="display-1 text-uppercase text-white mb-4 animated zoomIn">Koperasi Digital
                     </h1>
-                    <a href="#" class="btn btn-primary py-3 px-4">Learn More</a>
+                    <a href="#" class="btn btn-primary py-3 px-4">Lainnya</a>
                 </div>
             </div>
             <div class="carousel-item">
                 <img class="w-100" src="{{ asset('assets/peran-koperasi-untuk-masyarakat.jpg') }}" alt="Image">
                 <div class="carousel-caption">
-                    <h1 class="display-1 text-uppercase text-white mb-4 animated zoomIn">Lorem Ipsum Dolor Sit Amet
+                    <h1 class="display-1 text-uppercase text-white mb-4 animated zoomIn">Koperasi Digital
                     </h1>
-                    <a href="#" class="btn btn-primary py-3 px-4">Learn More</a>
+                    <a href="#" class="btn btn-primary py-3 px-4">Lainnya</a>
                 </div>
             </div>
         </div>

@@ -21,34 +21,22 @@
 
     @include('layouts.components.topbar')
     @include('layouts.components.navbarDashboard')
-    @include('layouts.components.carousel')
+    {{-- @include('layouts.components.carousel') --}}
 
     <div class="container-fluid pt-6 pb-6">
         <div class="container">
             <div class="row g-5 mb-6">
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
                     <h1 class="display-6 text-uppercase mb-4">Keanggotaan</h1>
-                    <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur tellus augue,
-                        iaculis id elit eget, ultrices pulvinar tortor. Quisque vel lorem porttitor, malesuada arcu
-                        quis, fringilla risus. Pellentesque eu consequat augue. Lorem ipsum dolor sit amet consectetur
-                        adipisicing elit. Accusantium inventore similique laboriosam dignissimos quaerat necessitatibus
-                        tenetur tempora assumenda consequatur molestias! Debitis sequi repudiandae suscipit blanditiis
-                        iure dolorem est perferendis consectetur.</p>
+                    <p class="mb-4">KSP IKR sebagai Primer Koperasi Nasional beranggotakan Pegawai/Karyawan/Anggota
+                        Kopkar/Anggota Kopeg pada Institusi Mitra Kerjasama.</p>
                 </div>
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
                     <h1 class="display-6 text-uppercase mb-4">Mitra Kerjasama</h1>
-                    <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur tellus augue,
-                        iaculis id elit eget, ultrices pulvinar tortor. Quisque vel lorem porttitor, malesuada arcu
-                        quis, fringilla risus. Pellentesque eu consequat augue. Lorem ipsum dolor sit amet consectetur
-                        adipisicing elit. Accusantium inventore similique laboriosam dignissimos quaerat necessitatibus
-                        tenetur tempora assumenda consequatur molestias! Debitis sequi repudiandae suscipit blanditiis
-                        iure dolorem est perferendis consectetur.</p>
-                    <p><i class="fa fa-check-square text-primary me-3"></i>Many variations of passages of lorem ipsum
-                    </p>
-                    <p><i class="fa fa-check-square text-primary me-3"></i>Many variations of passages of lorem ipsum
-                    </p>
-                    <p><i class="fa fa-check-square text-primary me-3"></i>Many variations of passages of lorem ipsum
-                    </p>
+                    <p class="mb-4">Institusi Mitra Kerjasama Koperasi meliputi :
+                        - Institusi Pemerintah (Kementerian, Lembaga, Badan, BUMN, BUMD, Pemprov, Pemkab & Pemko)
+                        - Institusi Swasta (PT, CV & Yayasan)
+                        - Kopkar/Kopeg.</p>
                 </div>
             </div>
 
@@ -57,22 +45,28 @@
                     <h1 class="display-6 text-uppercase mb-4">Mitra Kerjasama</h1>
                     <div class="row g-5">
                         <div class="col-4">
-                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
+                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}"
+                                alt="">
                         </div>
                         <div class="col-4">
-                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
+                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}"
+                                alt="">
                         </div>
                         <div class="col-4">
-                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
+                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}"
+                                alt="">
                         </div>
                         <div class="col-4">
-                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
+                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}"
+                                alt="">
                         </div>
                         <div class="col-4">
-                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
+                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}"
+                                alt="">
                         </div>
                         <div class="col-4">
-                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}" alt="">
+                            <img class="img-fluid" src="{{ asset('assets/fungsi-koperasi-di-Indonesia.jpg') }}"
+                                alt="">
                         </div>
                     </div>
                 </div>
@@ -80,7 +74,7 @@
         </div>
     </div>
 
-    @include('layouts.components.footerDashboard')
+    {{-- @include('layouts.components.footerDashboard') --}}
     @include('layouts.components.copyright')
 
     <!-- Back to Top -->
