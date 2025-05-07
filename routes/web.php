@@ -1,13 +1,14 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SaldoController;
+use App\Http\Controllers\PinjamanController;
+use App\Http\Controllers\SimpananController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardMenuController;
 use App\Http\Controllers\DashboardUserController;
-use App\Http\Controllers\PinjamanController;
-use App\Http\Controllers\SimpananController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,12 +58,21 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
     });
 
     Route::group(['prefix' => 'simpanan'], function() {
-        Route::get('/', [SimpananController::class, 'index'])->name('simpanan');
+        Route::get('/', [SimpananController::class, 'index'])->name('simpanan.index');
         Route::get('create', [SimpananController::class, 'create'])->name('simpanan.create');
         Route::post('store', [SimpananController::class, 'store'])->name('simpanan.store');
         Route::get('edit/{id}', [SimpananController::class, 'edit'])->name('simpanan.edit');
         Route::get('show/{id}', [SimpananController::class, 'show'])->name('simpanan.show');
         Route::patch('update/{id}', [SimpananController::class, 'update'])->name('simpanan.update');
         Route::post('destroy', [SimpananController::class, 'destroy'])->name('simpanan.destroy');
+    });
+    Route::group(['prefix' => 'saldo'], function() {
+        Route::get('/', [SaldoController::class, 'index'])->name('saldo.index');
+        Route::get('create', [SaldoController::class, 'create'])->name('saldo.create');
+        Route::post('store', [SaldoController::class, 'store'])->name('saldo.store');
+        Route::get('edit/{id}', [SaldoController::class, 'edit'])->name('saldo.edit');
+        Route::get('show/{id}', [SaldoController::class, 'show'])->name('saldo.show');
+        Route::patch('update/{id}', [SaldoController::class, 'update'])->name('saldo.update');
+        Route::post('destroy', [SaldoController::class, 'destroy'])->name('saldo.destroy');
     });
 });

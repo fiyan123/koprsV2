@@ -8,7 +8,7 @@
         <div class="col-lg-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body d-flex justify-content-end align-items-center">
-                    <a href="{{ route('Pinjam.create') }}" class="btn btn-primary">Tambah Data</a>
+                    <a href="{{ route('simpanan.create') }}" class="btn btn-primary">Tambah Data</a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -95,7 +95,7 @@
                 processing: true,
                 responsive: true,
                 ajax: {
-                    url: "{{ route('simpanan') }}",
+                    url: "{{ route('simpanan.index') }}",
                     type: 'GET',
                 },
 

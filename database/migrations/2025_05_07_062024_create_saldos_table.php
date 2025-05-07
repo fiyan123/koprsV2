@@ -12,13 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('saldos', function (Blueprint $table) {
-            $table->id();
-            $table->decimal('jumlah_saldo', 18, 2);
-            $table->enum('type_saldo', ['saldo_simpanan', 'saldo_pinjaman', 'saldo_koperasi']);
-            $table->enum('status_saldo', ['pengeluaran', 'pemasukan']);
-            $table->text('description')->nullable();
-            $table->timestamps();
-        });
+        $table->id();
+        $table->bigInteger('jumlah_saldo');  // Menyimpan jumlah saldo sebagai big integer
+        $table->enum('type_saldo', ['saldo_simpanan', 'saldo_pinjaman', 'saldo_koperasi']);  // Tipe saldo
+        $table->enum('status_saldo', ['pengeluaran', 'pemasukan']);  // Status saldo: pemasukan atau pengeluaran
+        $table->text('description')->nullable();  // Deskripsi optional
+        $table->timestamps();
+    });
+
     }
 
     /**

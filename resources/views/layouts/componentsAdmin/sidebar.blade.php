@@ -15,8 +15,8 @@
             <div class="collapse" id="ui-basic">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"> <a class="nav-link" href="{{route('Pinjam.index')}}">Pinjam</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="{{ route('simpanan') }}">Simpanan</a></li>
-                    {{-- <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">H</a> --}}
+                    <li class="nav-item"> <a class="nav-link" href="{{ route('simpanan.index') }}">Simpanan</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{ route('saldo.index') }}">Saldo</a></li>
                     </li>
                 </ul>
             </div>
