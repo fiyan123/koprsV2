@@ -31,6 +31,11 @@ Route::middleware('guest')->group(function () {
     Route::post('login', [LoginController::class, 'loginAction'])->name('login.action');
 });
 
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect('/');
+})->name('logout');
+
 Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
 
     Route::get('/Pinjam', [PinjamanController::class, 'index'])->name('Pinjam.index');

@@ -27,18 +27,24 @@
 
 <body>
     <div class="container-scroller">
-
         @include('layouts.componentsAdmin.navbar')
         <div class="container-fluid page-body-wrapper">
+
             @include('layouts.componentsAdmin.sidebarSkins')
 
             @include('layouts.componentsAdmin.todoList')
 
             @include('layouts.componentsAdmin.sidebar')
 
-
-            @yield('content')
-            
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-md-12 grid-margin stretch-card">
+                            @yield('content')
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
