@@ -28,6 +28,7 @@ return new class extends Migration
             $table->decimal('total_pembayaran', 12, 2);
             $table->decimal('cicilan_pembayaran', 12, 2);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status_pinjaman', ['aktif', 'tidak_aktif']);
             $table->timestamps();
 
             // Foreign key constraint

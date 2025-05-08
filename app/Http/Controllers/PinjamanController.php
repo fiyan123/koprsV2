@@ -100,7 +100,8 @@ class PinjamanController extends Controller
                 'total_bunga' => number_format($totalBunga, 2, '.', ''),
                 'total_pembayaran' => number_format($totalPembayaran, 2, '.', ''),
                 'cicilan_pembayaran' => number_format($cicilanPerPembayaran, 2, '.', ''),
-                'status' => 'pending'
+                'status' => 'pending',
+                'status_pinjaman' => 'aktif'
             ]);
 
             DB::commit();

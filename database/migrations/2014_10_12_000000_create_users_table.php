@@ -20,10 +20,12 @@ return new class extends Migration
             $table->rememberToken();
             $table->string('nip')->unique()->nullable();
             $table->text('alamat')->nullable();
-            $table->string('noktp', 50)->nullable();
+            $table->string('no_ktp', 50)->unique();
             $table->date('tgl_lahir')->nullable();
-            $table->string('no_hp', 20)->nullable();
+            $table->string('no_hp', 20)->unique();
             $table->string('foto')->nullable();
+            $table->string('foto_ktp')->nullable();
+            $table->string('foto_dengan_ktp')->nullable();
             $table->timestamps();
         });
 
