@@ -13,12 +13,12 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+            <a class="nav-link" data-toggle="collapse" href="#produk-basic" aria-expanded="false" aria-controls="produk-basic">
                 <i class="icon-layout menu-icon"></i>
                 <span class="menu-title">Produk</span>
                 <i class="menu-arrow"></i>
             </a>
-            <div class="collapse" id="ui-basic">
+            <div class="collapse" id="produk-basic">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"> <a class="nav-link" href="{{route('pinjaman.index')}}">Pinjam</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ route('simpanan.index') }}">Simpanan</a></li>

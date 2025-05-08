@@ -12,7 +12,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="dataTable" class="table table-bordered">
+                        <table id="dataTable" class="table table-bordered display responsive nowrap" style="width:100%">
                             <thead>
                                 <tr class="fw-bolder">
                                     <th>No</th>
@@ -39,89 +39,112 @@
 @endsection
 
 @push('scripts')
-<script>
-    $(document).ready(function() {
-        loadData();
+    <script>
+        $(document).ready(function() {
+            loadData();
 
-        $(document).on('click', '.delete', function() {
-            let id = $(this).attr('id');
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "Data akan dihapus permanen!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{{ route('pinjaman.destroy') }}",
-                        type: 'POST',
-                        data: {
-                            id: id,
-                            _token: "{{ csrf_token() }}"
-                        },
-                        success: function(res, status) {
-                            if (status == '200') {
+            $(document).on('click', '.delete', function() {
+                let id = $(this).attr('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Data akan dihapus permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('pinjaman.destroy') }}",
+                            type: 'POST',
+                            data: {
+                                id: id,
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(res, status) {
+                                if (status == '200') {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Data Berhasil Dihapus',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    }).then(() => {
+                                        $('#dataTable').DataTable().ajax
+                                        .reload();
+                                    });
+                                }
+                            },
+                            error: function(xhr) {
                                 Swal.fire({
-                                    icon: 'success',
-                                    title: 'Data Berhasil Dihapus',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                }).then(() => {
-                                    $('#dataTable').DataTable().ajax.reload();
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: xhr.responseJSON.text,
                                 });
                             }
-                        },
-                        error: function(xhr) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: xhr.responseJSON.text,
-                            });
-                        }
-                    });
-                }
+                        });
+                    }
+                });
             });
         });
-    });
 
-    function loadData() {
-        $('#dataTable').DataTable({
-            pageLength: 10,
-            searching: true,
-            serverSide: true,
-            processing: true,
-            responsive: true,
-            ajax: {
-                url: "{{ route('pinjaman.index') }}",
-                type: 'GET',
-            },
-            columnDefs: [{
-                "defaultContent": "-",
-                "targets": "_all"
-            }],
-            columns: [
-                { data: 'DT_RowIndex' },
-                { data: 'nama' },
-                { data: 'alamat' },
-                { data: 'nip' },
-                { data: 'jumlah' },
-                { data: 'durasi' },
-                { data: 'bunga' },
-                { data: 'angsuran_per_bulan' },
-                { data: 'total_bayar' },
-                { data: 'no_rek' },
-                { data: 'status' },
-                {
-                    data: 'action',
-                    className: "text-center",
-                    orderable: false,
-                    searchable: false
+        function loadData() {
+            $('#dataTable').DataTable({
+                scrollX: true,
+                pageLength: 10,
+                searching: true,
+                serverSide: true,
+                processing: true,
+                responsive: true,
+                ajax: {
+                    url: "{{ route('pinjaman.index') }}",
+                    type: 'GET',
                 },
-            ],
-        });
-    }
-</script>
+                columnDefs: [{
+                    "defaultContent": "-",
+                    "targets": "_all"
+                }],
+                columns: [{
+                        data: 'DT_RowIndex'
+                    },
+                    {
+                        data: 'nama'
+                    },
+                    {
+                        data: 'alamat'
+                    },
+                    {
+                        data: 'nip'
+                    },
+                    {
+                        data: 'jumlah'
+                    },
+                    {
+                        data: 'durasi'
+                    },
+                    {
+                        data: 'bunga'
+                    },
+                    {
+                        data: 'angsuran_per_bulan'
+                    },
+                    {
+                        data: 'total_bayar'
+                    },
+                    {
+                        data: 'no_rek'
+                    },
+                    {
+                        data: 'status'
+                    },
+                    {
+                        data: 'action',
+                        className: "text-center",
+                        orderable: false,
+                        searchable: false
+                    },
+                ],
+            });
+        }
+    </script>
 @endpush

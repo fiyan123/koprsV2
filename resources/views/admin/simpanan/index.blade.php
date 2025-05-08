@@ -12,7 +12,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="dataTable" class="table table-bordered">
+                        <table id="dataTable" class="table table-bordered display responsive nowrap" style="width:100%">
                             <thead>
                                 <tr class="fw-bolder">
                                     <th scope="col">No</th>
@@ -90,6 +90,7 @@
         function loadData() {
             table = $('#dataTable').DataTable({
                 pageLength: 10,
+                scrollX: true,
                 searching: true,
                 serverSide: true,
                 processing: true,

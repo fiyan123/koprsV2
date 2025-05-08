@@ -23,6 +23,27 @@
 
     <!-- endinject -->
     <link rel="shortcut icon" href="{{ asset('assets/Logo_New_Juwita.png') }}" />
+    <style>
+        .logout-link {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            box-shadow: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logout-link:hover {
+            background: none;
+            box-shadow: none;
+        }
+
+        .logout-link i {
+            font-size: 1.25rem;
+        }
+    </style>
 </head>
 
 <body>
@@ -63,6 +84,8 @@
     <!-- Custom js for this page-->
     <script src="{{ asset('assetsAdmin/js/dashboard.js') }}"></script>
     <script src="{{ asset('assetsAdmin/js/Chart.roundedBarCharts.js') }}"></script>
+
+    {{-- Hightchart --}}
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <!-- jQuery (harus di-load duluan) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
