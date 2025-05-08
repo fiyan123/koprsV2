@@ -20,7 +20,7 @@
             </a>
             <div class="collapse" id="ui-basic">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="{{route('Pinjam.index')}}">Pinjam</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{route('pinjaman.index')}}">Pinjam</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ route('simpanan.index') }}">Simpanan</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ route('saldo.index') }}">Saldo</a></li>
                     </li>
