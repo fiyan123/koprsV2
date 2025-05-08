@@ -15,18 +15,23 @@
                         <table id="dataTable" class="table table-bordered display responsive nowrap" style="width:100%">
                             <thead>
                                 <tr class="fw-bolder">
-                                    <th>No</th>
-                                    <th>Nama</th>
-                                    <th>Alamat</th>
-                                    <th>NIP</th>
-                                    <th>Jumlah Pinjaman</th>
-                                    <th>Durasi (bulan)</th>
-                                    <th>Bunga (%)</th>
-                                    <th>Angsuran / Bulan</th>
-                                    <th>Total Bayar</th>
-                                    <th>No Rekening</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th scope="col">No</th>
+                                    <th scope="col" class="min-w-100px">User Id</th>
+                                    <th scope="col" class="min-w-100px">Nama</th>
+                                    <th scope="col" class="min-w-100px">Tanggal Lahir</th>
+                                    <th scope="col" class="min-w-100px">Nip</th>
+                                    <th scope="col" class="min-w-100px">Email</th>
+                                    <th scope="col" class="min-w-100px">Alamat</th>
+                                    <th scope="col" class="min-w-100px">No Rek</th>
+                                    <th scope="col" class="min-w-100px">Jumlah Pinjaman</th>
+                                    <th scope="col" class="min-w-100px">Tipe Durasi</th>
+                                    <th scope="col" class="min-w-100px">Durasi (bulan)</th>
+                                    <th scope="col" class="min-w-100px">Bunga (%)</th>
+                                    <th scope="col" class="min-w-100px">Total Bunga</th>
+                                    <th scope="col" class="min-w-100px">Total Pembayaran</th>
+                                    <th scope="col" class="min-w-100px">Cicilan Pembayaran</th>
+                                    <th scope="col" class="min-w-100px">Status</th>
+                                    <th scope="col" class="min-w-100px">Actions</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -71,7 +76,7 @@
                                         timer: 1500
                                     }).then(() => {
                                         $('#dataTable').DataTable().ajax
-                                        .reload();
+                                            .reload();
                                     });
                                 }
                             },
@@ -108,16 +113,31 @@
                         data: 'DT_RowIndex'
                     },
                     {
+                        data: 'user_id'
+                    },
+                    {
                         data: 'nama'
                     },
                     {
-                        data: 'alamat'
+                        data: 'tgl_lahir'
                     },
                     {
                         data: 'nip'
                     },
                     {
+                        data: 'email'
+                    },
+                    {
+                        data: 'alamat'
+                    },
+                    {
+                        data: 'no_rek'
+                    },
+                    {
                         data: 'jumlah'
+                    },
+                    {
+                        data: 'tipe_durasi'
                     },
                     {
                         data: 'durasi'
@@ -126,13 +146,13 @@
                         data: 'bunga'
                     },
                     {
-                        data: 'angsuran_per_bulan'
+                        data: 'total_bunga'
                     },
                     {
-                        data: 'total_bayar'
+                        data: 'total_pembayaran'
                     },
                     {
-                        data: 'no_rek'
+                        data: 'cicilan_pembayaran'
                     },
                     {
                         data: 'status'
