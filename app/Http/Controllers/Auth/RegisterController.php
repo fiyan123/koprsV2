@@ -81,7 +81,13 @@ class RegisterController extends Controller
         $user->foto_ktp = $fotoKtp;
         $user->foto_dengan_ktp = $fotoDenganKtp;
         $user->save();
+        // Insert ke tabel pivot
+        DB::table('role_user')->insert([
+            'role_id' => 3,
+            'user_id' => $user->id,
+            'user_type' => 'App\\Models\\User',
 
+        ]);
         Auth::login($user);
         return redirect(route('dashboard'))->with('toast_success', 'Pendaftaran Berhasil, Selamat Datang! ' . Auth::user()->name);
     }

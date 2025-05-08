@@ -45,18 +45,27 @@ class usermanagementSeeder extends Seeder
                 'email' => 'admin@example.com',
                 'nip'   => '1111111111',
                 'role'  => 'admin',
+                'no_ktp'  => '001',
+                'no_hp'  => '08123456789',
             ],
             [
                 'name'  => 'Manager User',
                 'email' => 'manager@example.com',
                 'nip'   => '2222222222',
                 'role'  => 'manager',
+                'no_ktp'  => '002',
+                'no_hp'  => '081234567891',
+
             ],
             [
                 'name'  => 'Anggota User',
                 'email' => 'anggota@example.com',
                 'nip'   => '3333333333',
                 'role'  => 'anggota',
+                'no_ktp'  => '003',
+                'no_hp'  => '08123456787',
+
+
             ],
         ];
 
@@ -68,9 +77,9 @@ class usermanagementSeeder extends Seeder
                 'password'          => Hash::make('password'),
                 'nip'               => $user['nip'],
                 'alamat'            => 'Bandung',
-                'noktp'               => '327xxxxxxx',
+                'no_ktp'               => $user['no_ktp'],
                 'tgl_lahir'         => '2000-01-01',
-                'no_hp'             => '08123456789',
+                'no_hp'             => $user['no_hp'],
                 'foto'              => null,
                 'created_at'        => now(),
                 'updated_at'        => now(),

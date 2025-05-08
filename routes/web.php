@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SSEController;
 use App\Http\Controllers\SaldoController;
+use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\PinjamanController;
 use App\Http\Controllers\SimpananController;
 use App\Http\Controllers\Auth\LoginController;
@@ -52,6 +53,7 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
     // Route::get('/Pinjam', [PinjamanController::class, 'index'])->name('Pinjam.index');
     // Route::get('/Crate-Pinjam', [PinjamanController::class, 'create'])->name('Pinjam.create');
 
+
     Route::group(['prefix' => 'home'], function() {
         Route::get('/', [DashboardMenuController::class, 'index'])->name('home');
         Route::get('create', [DashboardMenuController::class, 'create'])->name('home.create');
@@ -62,13 +64,28 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
         Route::post('destroy', [DashboardMenuController::class, 'destroy'])->name('home.destroy');
     });
 
+    Route::group(['prefix' => 'anggota'], function() {
+        Route::get('/', [AnggotaController::class, 'index'])->name('anggota.index');
+        Route::get('create', [AnggotaController::class, 'create'])->name('anggota.create');
+        Route::post('store', [AnggotaController::class, 'store'])->name('anggota.store');
+        Route::get('edit/{id}', [AnggotaController::class, 'edit'])->name('anggota.edit');
+        Route::get('show/{id}', [AnggotaController::class, 'show'])->name('anggota.show');
+        Route::patch('update/{id}', [AnggotaController::class, 'update'])->name('anggota.update');
+        Route::post('destroy', [AnggotaController::class, 'destroy'])->name('anggota.destroy');
+    });
+
+
     Route::group(['prefix' => 'pinjaman'], function() {
         Route::get('/', [PinjamanController::class, 'index'])->name('pinjaman.index');
         Route::get('create', [PinjamanController::class, 'create'])->name('pinjaman.create');
         Route::post('store', [PinjamanController::class, 'store'])->name('pinjaman.store');
         Route::get('edit/{id}', [PinjamanController::class, 'edit'])->name('pinjaman.edit');
         Route::get('show/{id}', [PinjamanController::class, 'show'])->name('pinjaman.show');
+        Route::get('bayar/{id}', [PinjamanController::class, 'bayar'])->name('pinjaman.bayar');
+        Route::post('approve/{id}', [PinjamanController::class, 'approve'])->name('pinjaman.approve');
+        Route::post('reject/{id}', [PinjamanController::class, 'reject'])->name('pinjaman.reject');
         Route::patch('update/{id}', [PinjamanController::class, 'update'])->name('pinjaman.update');
+        Route::patch('bayar/update/{id}', [PinjamanController::class, 'proses_bayar'])->name('pinjaman.proses_bayar');
         Route::post('destroy', [PinjamanController::class, 'destroy'])->name('pinjaman.destroy');
     });
 
