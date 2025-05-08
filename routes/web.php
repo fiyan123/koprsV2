@@ -114,11 +114,7 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
 
     Route::group(['prefix' => 'laporan'], function() {
         Route::get('/', [LaporanController::class, 'index'])->name('laporan');
-        Route::get('create', [LaporanController::class, 'create'])->name('laporan.create');
-        Route::post('store', [LaporanController::class, 'store'])->name('laporan.store');
-        Route::get('edit/{id}', [LaporanController::class, 'edit'])->name('laporan.edit');
-        Route::get('show/{id}', [LaporanController::class, 'show'])->name('laporan.show');
-        Route::patch('update/{id}', [LaporanController::class, 'update'])->name('laporan.update');
-        Route::post('destroy', [LaporanController::class, 'destroy'])->name('laporan.destroy');
+        Route::get('/simpanan', [LaporanController::class, 'laporan_simpanan'])->name('laporan.simpanan');
+        Route::get('/pinjaman', [LaporanController::class, 'laporan_pinjaman'])->name('laporan.pinjaman');
     });
 });

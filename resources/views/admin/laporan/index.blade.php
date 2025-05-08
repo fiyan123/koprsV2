@@ -50,7 +50,7 @@
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="fw-bold mb-0">Data Simpanan</h5>
-                                <a href="{{ route('simpanan.index') }}" class="btn btn-sm btn-success mb-3">
+                                <a href="#" id="exportSimpanan" class="btn btn-sm btn-success mb-3">
                                     <i class="fas fa-file-excel me-1"></i> Export Simpanan
                                 </a>
                             </div>
@@ -75,7 +75,7 @@
                         <div class="mt-4">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="fw-bold mb-0">Data Pinjaman</h5>
-                                <a href="{{ route('pinjaman.index') }}" class="btn btn-sm btn-primary mb-3">
+                                <a href="#" id="exportPinjaman" class="btn btn-sm btn-primary mb-3">
                                     <i class="fas fa-file-export me-1"></i> Export Pinjaman
                                 </a>
                             </div>
@@ -100,3 +100,25 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script>
+        document.getElementById('exportSimpanan').addEventListener('click', function(e) {
+            e.preventDefault();
+            let tahun = document.getElementById('tahun').value;
+            let bulan = document.getElementById('bulan').value;
+
+            // Arahkan ke route dengan query string, contoh:
+            let url = `{{ route('laporan.simpanan') }}?tahun=${tahun}&bulan=${bulan}`;
+            window.location.href = url;
+        });
+
+        document.getElementById('exportPinjaman').addEventListener('click', function(e) {
+            e.preventDefault();
+            let tahun = document.getElementById('tahun').value;
+            let bulan = document.getElementById('bulan').value;
+
+            let url = `{{ route('laporan.pinjaman') }}?tahun=${tahun}&bulan=${bulan}`;
+            window.location.href = url;
+        });
+    </script>
+@endpush
