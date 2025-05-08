@@ -9,5 +9,7 @@ class Pinjaman extends Model
 {
     use HasFactory;
     protected $table = 'pinjamans'; // Pastikan nama tabel sesuai
+    protected $guarded = ['id'];
+
 
 }

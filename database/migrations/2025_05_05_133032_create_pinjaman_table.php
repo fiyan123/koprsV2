@@ -13,25 +13,29 @@ return new class extends Migration
     {
         Schema::create('pinjamans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id'); // relasi ke users
+            $table->unsignedBigInteger('user_id'); // relasi ke tabel users
             $table->string('nama');
+            $table->date('tgl_lahir'); // gunakan tipe date untuk tanggal lahir
+            $table->string('nip'); // biasanya NIP bersifat unik
+            $table->string('email');
             $table->text('alamat');
-            $table->string('nip', 20);
-            $table->decimal('jumlah', 12, 2);                         // total pinjaman
-            $table->integer('durasi');                                // durasi dalam bulan
-            $table->decimal('bunga', 5, 2);                           // bunga dalam persen, misal 2.5
-            $table->decimal('angsuran_per_bulan', 12, 2)->nullable(); // bisa dihitung otomatis
-            $table->decimal('total_bayar', 12, 2)->nullable();        // hasil dari angsuran * durasi
             $table->string('no_rek');
+            $table->decimal('jumlah', 12, 2); // pinjaman pokok
+            $table->enum('tipe_durasi', ['harian', 'bulanan', 'tahunan']);
+            $table->integer('durasi'); // durasi sesuai tipe
+            $table->decimal('bunga', 5, 2); // persen bunga
+            $table->decimal('total_bunga', 12, 2);
+            $table->decimal('total_pembayaran', 12, 2);
+            $table->decimal('cicilan_pembayaran', 12, 2);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
 
-            // Foreign key
+            // Foreign key constraint
             $table->foreign('user_id')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                  ->references('id')
+                  ->on('users')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
         });
     }
 

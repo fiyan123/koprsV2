@@ -33,6 +33,10 @@
             <label for="durasi" id="durasi-label">Durasi (hari)</label>
             <input type="number" name="durasi" class="form-control" placeholder="Misal: 10" required>
           </div>
+          <div class="form-group">
+            <label for="no_rekening">Nomor Rekening Penerima</label>
+            <input type="text" name="no_rekening" id="no_rekening" class="form-control" placeholder="Contoh: 1234567890" required>
+          </div>
 
           <input type="hidden" name="bunga" id="bunga-hidden">
 
@@ -80,9 +84,9 @@
         if (tipeDurasi === 'harian') {
             bunga = 1; // Bunga harian 1%
         } else if (tipeDurasi === 'bulanan') {
-            bunga = 4; // Bunga bulanan 3%
+            bunga = 4; // Bunga bulanan 4%
         } else if (tipeDurasi === 'tahunan') {
-            bunga = 7.2; // Bunga tahunan 7.2%
+            bunga = 8; // Bunga tahunan 8%
         }
 
         // Hitung total bunga berdasarkan tipe durasi
