@@ -15,11 +15,16 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id'); // relasi ke tabel users
             $table->string('nama');
+            $table->string('email');
             $table->date('tgl_lahir'); // gunakan tipe date untuk tanggal lahir
             $table->string('nip'); // biasanya NIP bersifat unik
-            $table->string('email');
             $table->text('alamat');
             $table->string('no_rek');
+            $table->string('no_ktp');
+            $table->string('no_hp');
+            $table->string('foto');
+            $table->string('foto_ktp');
+            $table->string('foto_dengan_ktp');
             $table->decimal('jumlah', 12, 2); // pinjaman pokok
             $table->enum('tipe_durasi', ['harian', 'bulanan', 'tahunan']);
             $table->integer('durasi'); // durasi sesuai tipe

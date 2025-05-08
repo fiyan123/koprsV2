@@ -12,7 +12,7 @@
     <div class="card">
       <div class="card-body">
         <h4 class="card-title">Form Tambah Pinjaman</h4>
-        <form method="POST" action="{{ route('pinjaman.store') }}">
+        <form method="POST" action="{{ route('pinjaman.store') }}" enctype="multipart/form-data">
           @csrf
 
           <div class="form-group">
@@ -36,6 +36,44 @@
           <div class="form-group">
             <label for="no_rekening">Nomor Rekening Penerima</label>
             <input type="text" name="no_rekening" id="no_rekening" class="form-control" placeholder="Contoh: 1234567890" required>
+          </div>
+          <div class="form-group">
+            <label for="tgl_lahir">Tanggal Lahir</label>
+            <input type="date" name="tgl_lahir" id="tgl_lahir" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label for="nip">NIP</label>
+            <input type="text" name="nip" id="nip" class="form-control" placeholder="Contoh: 1987654321" required>
+          </div>
+
+          <div class="form-group">
+            <label for="alamat">Alamat</label>
+            <textarea name="alamat" id="alamat" class="form-control" rows="3" placeholder="Masukkan alamat lengkap" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="no_ktp">Nomor KTP</label>
+            <input type="text" name="no_ktp" id="no_ktp" class="form-control" placeholder="Contoh: 3201234567890001" required>
+          </div>
+
+          <div class="form-group">
+            <label for="no_hp">Nomor HP</label>
+            <input type="text" name="no_hp" id="no_hp" class="form-control" placeholder="Contoh: 081234567890" required>
+          </div>
+          <div class="form-group">
+            <label for="foto">Foto Profil</label>
+            <input type="file" name="foto" class="form-control" accept="image/*" required>
+          </div>
+
+          <div class="form-group">
+            <label for="foto_ktp">Foto KTP</label>
+            <input type="file" name="foto_ktp" class="form-control" accept="image/*" required>
+          </div>
+
+          <div class="form-group">
+            <label for="foto_dengan_ktp">Foto dengan KTP</label>
+            <input type="file" name="foto_dengan_ktp" class="form-control" accept="image/*" required>
           </div>
 
           <input type="hidden" name="bunga" id="bunga-hidden">

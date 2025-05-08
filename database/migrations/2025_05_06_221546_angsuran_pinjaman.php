@@ -20,6 +20,7 @@ return new class extends Migration
         $table->date('tanggal_bayar')->nullable(); // tanggal bayar (boleh null kalau belum bayar)
         $table->decimal('jumlah_dibayar', 12, 2)->nullable(); // jumlah yang dibayar
         $table->decimal('denda', 12, 2)->default(0); // denda kalau telat bayar
+        $table->string('total_denda')->default(0); // denda kalau telat bayar
         $table->enum('status', ['lunas', 'belum_lunas'])->default('belum_lunas');
         $table->string('bukti_transfer')->nullable();  // Kolom untuk path atau nama file bukti transfer
 

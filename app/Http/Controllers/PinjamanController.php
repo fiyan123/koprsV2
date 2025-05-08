@@ -12,60 +12,64 @@ use Yajra\DataTables\Facades\DataTables;
 class PinjamanController extends Controller
 {
     public function index(Request $request)
-{
-    if ($request->ajax()) {
-        // Ambil data pinjaman, sesuaikan query berdasarkan role
-        if (auth()->user()->hasRole('anggota')) {
-            // Jika login sebagai anggota, tampilkan hanya pinjaman yang terkait dengan user_id anggota
-            $data = Pinjaman::select('id', 'nama', 'tgl_lahir', 'nip', 'jumlah', 'status')
-                ->where('user_id', auth()->user()->id) // Menyaring berdasarkan user yang login
-                ->get();
-        } else {
-            // Untuk role selain anggota, ambil semua data pinjaman
-            $data = Pinjaman::select('id', 'nama', 'tgl_lahir', 'nip', 'jumlah', 'status')->get();
-            // dd($data);
+    {
+        if ($request->ajax()) {
+            // Ambil data pinjaman, sesuaikan query berdasarkan role
+            if (auth()->user()->hasRole('anggota')) {
+                $data = Pinjaman::select('id', 'nama', 'tgl_lahir', 'nip', 'jumlah', 'status', 'status_pinjaman')
+                    ->where('user_id', auth()->user()->id)
+                    ->get();
+            } else {
+                $data = Pinjaman::select('id', 'nama', 'tgl_lahir', 'nip', 'jumlah', 'status', 'status_pinjaman')->get();
+            }
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '<div class="d-flex">';
+                    $btn .= '<a href="' . route('pinjaman.show', $row->id) . '" class="btn btn-info me-1">Detail</a>';
+
+                    if (auth()->user()->hasRole('anggota') && $row->status == 'approved' && $row->status_pinjaman == 'aktif') {
+                        $btn .= '<a href="' . route('pinjaman.bayar', $row->id) . '" class="btn btn-dark me-1">Bayar</a>';
+                    }
+                    if ($row->status == 'approved' && $row->status_pinjaman == 'tidak_aktif') {
+                        $btn .= '<button class="btn btn-success me-1" disabled>Lunas</button>';
+                    }
+
+                    if ($row->status == 'approved' && $row->status_pinjaman == 'aktif') {
+                        $btn .= '<button class="btn btn-warning me-1" disabled>Belum Lunas</button>';
+                    }
+
+                    if ($row->status == 'pending' && $row->status_pinjaman == 'aktif') {
+                        $btn .= '<button class="btn btn-secondary me-1" disabled>Proses</button>';
+                    }
+
+
+                    if (auth()->user()->hasRole('admin') && $row->status == 'pending' && $row->status_pinjaman == 'aktif') {
+                        $btn .= '
+                        <form action="' . route('pinjaman.approve', $row->id) . '" method="POST" style="display:inline;">
+                            ' . csrf_field() . '
+                            ' . method_field('POST') . '
+                            <button type="submit" class="btn btn-success me-1">Approve</button>
+                        </form>';
+
+                        $btn .= '
+                        <form action="' . route('pinjaman.reject', $row->id) . '" method="POST" style="display:inline;">
+                            ' . csrf_field() . '
+                            ' . method_field('POST') . '
+                            <button type="submit" class="btn btn-danger me-1">Reject</button>
+                        </form>';
+                    }
+
+                    $btn .= '</div>';
+                    return $btn;
+                })
+                ->rawColumns(['action']) // Tambahkan 'status_pinjaman' di sini agar HTML-nya tidak di-escape
+                ->make(true);
         }
-
-        // Mengembalikan data dalam format DataTables
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $btn = '<div class="d-flex">';
-
-                $btn .= '<a href="' . route('pinjaman.show', $row->id) . '" class="btn btn-info me-1">Detail</a>';
-
-                // Jika status pinjaman sudah disetujui dan login sebagai anggota, tampilkan tombol Bayar
-                if (auth()->user()->hasRole('anggota') && $row->status == 'approved') {
-                    $btn .= '<a href="' . route('pinjaman.bayar', $row->id) . '" class="btn btn-dark me-1">Bayar</a>';
-                }
-
-                // Jika login sebagai selain anggota, tampilkan tombol Approve dan Reject
-                if (auth()->user()->hasRole('admin') && $row->status == 'pending') {
-                    $btn .= '
-                    <form action="' . route('pinjaman.approve', $row->id) . '" method="POST" style="display:inline;">
-                        ' . csrf_field() . '
-                        ' . method_field('POST') . '
-                        <button type="submit" class="btn btn-success me-1">Approve</button>
-                    </form>';
-
-                    $btn .= '
-                    <form action="' . route('pinjaman.reject', $row->id) . '" method="POST" style="display:inline;">
-                        ' . csrf_field() . '
-                        ' . method_field('POST') . '
-                        <button type="submit" class="btn btn-danger me-1">Reject</button>
-                    </form>';
-
-                }
-
-                $btn .= '</div>';
-                return $btn;
-            })
-            ->rawColumns(['action']) // Penting agar HTML tidak di-escape
-            ->make(true);
+        return view('admin.pinjam.index');
     }
 
-    return view('admin.pinjam.index');
-}
 public function approve($id)
 {
     $pinjaman = Pinjaman::findOrFail($id);
@@ -98,8 +102,15 @@ public function reject($id)
             'tipe_durasi' => 'required|in:harian,bulanan,tahunan',
             'durasi' => 'required|integer|min:1',
             'no_rekening' => 'required|string|max:255',
+            'nip' => 'required',
+            'alamat' => 'nullable|string',
+            'no_ktp' => 'nullable|string|max:50',
+            'tgl_lahir' => 'nullable|date',
+            'no_hp' => 'nullable|string|max:20',
+            'foto' => 'required|image|mimes:jpg,jpeg,png|max:5120',
+            'foto_ktp' => 'required|image|mimes:jpg,jpeg,png|max:5120',
+            'foto_dengan_ktp' => 'required|image|mimes:jpg,jpeg,png|max:5120',
         ]);
-
         try {
             DB::beginTransaction();
 
@@ -131,16 +142,36 @@ public function reject($id)
             if (!$user) {
                 return redirect()->back()->withErrors('Akun ini bukan anggota.');
             }
+            $year = now()->year;
+
+            // Validasi file
+            if (
+                !$request->hasFile('foto') || !$request->file('foto')->isValid() ||
+                !$request->hasFile('foto_ktp') || !$request->file('foto_ktp')->isValid() ||
+                !$request->hasFile('foto_dengan_ktp') || !$request->file('foto_dengan_ktp')->isValid()
+            ) {
+                return redirect()->back()->withInput()->with('toast_error', 'Semua foto harus diunggah dan valid.');
+            }
+
+            // Upload file
+            $foto = $request->file('foto')->store("foto_user/{$year}", 'public');
+            $fotoKtp = $request->file('foto_ktp')->store("foto_ktp/{$year}", 'public');
+            $fotoDenganKtp = $request->file('foto_dengan_ktp')->store("foto_dengan_ktp/{$year}", 'public');
 
             // Simpan pinjaman
             $pinjaman = Pinjaman::create([
                 'user_id' => $user->id,
                 'nama' => $user->name,
-                'tgl_lahir' => $user->tgl_lahir,
-                'nip' => $user->nip,
+                'tgl_lahir' => $request->tgl_lahir,
+                'nip' => $request->nip,
                 'email' => $user->email,
-                'alamat' => $user->alamat,
+                'alamat' => $request->alamat,
                 'no_rek' => $noRekening,
+                'no_ktp' => $request->no_ktp,
+                'no_hp' => $request->no_hp,
+                'foto' => $foto,
+                'foto_ktp' => $fotoKtp,
+                'foto_dengan_ktp' => $fotoDenganKtp,
                 'jumlah' => number_format($jumlah, 2, '.', ''),
                 'tipe_durasi' => $tipe,
                 'durasi' => $durasi,
@@ -169,6 +200,7 @@ public function reject($id)
                     'jumlah_dibayar' => null,
                     'tanggal_bayar' => null,
                     'denda' => 0,
+                    'total_denda' => 0,
                     'status' => 'belum_lunas'
                 ]);
 
@@ -184,86 +216,99 @@ public function reject($id)
         }
     }
 
-
-
-
-    public function edit(Pinjaman $pinjaman)
-    {
-        $users = User::all();
-        return view('admin.pinjam.edit', compact('pinjaman', 'users'));
-    }
     public function bayar($pinjaman_id)
-{
-    // Ambil data pinjaman berdasarkan pinjaman_id
-    $pinjaman = Pinjaman::findOrFail($pinjaman_id);
+    {
+        // Ambil data pinjaman
+        $pinjaman = Pinjaman::findOrFail($pinjaman_id);
 
-    // Ambil data angsuran berdasarkan angsuran_ke
-    $angsuran = DB::table('angsuran_pinjaman')
-        ->where('pinjaman_id', $pinjaman_id)
-        ->first();
+        // Ambil semua angsuran pinjaman (diurutkan)
+        $semuaAngsuran = DB::table('angsuran_pinjaman')
+            ->where('pinjaman_id', $pinjaman_id)
+            ->orderBy('angsuran_ke', 'asc')
+            ->get();
 
+        // Cari angsuran pertama yang belum dibayar
+        $angsuran = $semuaAngsuran->whereNull('tanggal_bayar')->first();
 
-    // Cek apakah angsuran sudah dibayar atau belum
-    if ($angsuran->status == 'lunas') {
-        return redirect()->route('pinjaman.index')->with('error', 'Angsuran ini sudah dibayar.');
+        if (!$angsuran) {
+            return redirect()->route('pinjaman.index')->with('error', 'Semua angsuran sudah dibayar!');
+        }
+
+        // Cek apakah ini adalah angsuran terakhir
+        $angsuranTerakhir = $semuaAngsuran->last()->id === $angsuran->id;
+
+        // Hitung total denda hanya jika angsuran terakhir
+        $totalDenda = $angsuranTerakhir ? $semuaAngsuran->sum('denda') : 0;
+
+        // Hitung jumlah dibayar: cicilan + total denda jika angsuran terakhir
+        $jumlahDibayar = $pinjaman->cicilan_pembayaran + $totalDenda;
+        return view('admin.pinjam.bayar', compact('pinjaman', 'angsuran', 'jumlahDibayar'));
     }
 
-    // Tampilkan form pembayaran
-    return view('admin.pinjam.bayar', compact('pinjaman', 'angsuran'));
-}
-public function proses_bayar(Request $request, $id)
-{
-    // Validasi input bukti transfer wajib diisi
-    $request->validate([
-        'bukti_transfer' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
-    ]);
-
-    // Cari pinjaman berdasarkan ID
-    $pinjaman = Pinjaman::findOrFail($id);
-
-    // Cari angsuran pertama yang belum dibayar untuk pinjaman ini
-    $angsuran = DB::table('angsuran_pinjaman')
-        ->where('pinjaman_id', $id)
-        ->whereNull('tanggal_bayar')
-        ->whereNull('jumlah_dibayar')
-        ->whereNull('bukti_transfer')
-        ->orderBy('angsuran_ke', 'asc')
-        ->first();
-
-    if (!$angsuran) {
-        return redirect()->route('pinjaman.index')->with('error', 'Semua angsuran sudah dibayar!');
-    }
-
-    // Path folder penyimpanan bukti transfer
-    $folderPath = storage_path('app/public/buktitf');
-
-    // Jika folder belum ada, buat folder
-    if (!file_exists($folderPath)) {
-        mkdir($folderPath, 0777, true);
-    }
-
-    // Ambil file bukti transfer
-    $buktiTransfer = $request->file('bukti_transfer');
-
-    // Format nama file
-    $timestamp = now()->format('Y_m_d_H_i_s');
-    $fileName = $timestamp . "_" . $pinjaman->id . "_" . $buktiTransfer->getClientOriginalName();
-
-    // Pindahkan file ke folder penyimpanan
-    $buktiTransfer->move($folderPath, $fileName);
-
-    // Update angsuran yang ditemukan
-    DB::table('angsuran_pinjaman')
-        ->where('id', $angsuran->id)
-        ->update([
-            'tanggal_bayar' => now(),
-            'jumlah_dibayar' => $pinjaman->cicilan_pembayaran,
-            'bukti_transfer' => 'storage/buktitf/' . $fileName,
-            'status' => 'lunas'
+    public function proses_bayar(Request $request, $id)
+    {
+        // Validasi input bukti transfer wajib diisi
+        $request->validate([
+            'bukti_transfer' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-    return redirect()->route('pinjaman.index')->with('success', 'Pembayaran angsuran berhasil!');
-}
+        // Cari pinjaman berdasarkan ID
+        $pinjaman = Pinjaman::findOrFail($id);
+
+        // Ambil semua angsuran pinjaman untuk cek total dan denda
+        $semuaAngsuran = DB::table('angsuran_pinjaman')
+            ->where('pinjaman_id', $id)
+            ->orderBy('angsuran_ke', 'asc')
+            ->get();
+
+        // Cari angsuran pertama yang belum dibayar
+        $angsuran = $semuaAngsuran->whereNull('tanggal_bayar')->first();
+
+        if (!$angsuran) {
+            return redirect()->route('pinjaman.index')->with('error', 'Semua angsuran sudah dibayar!');
+        }
+
+        // Cek apakah ini adalah angsuran terakhir
+        $angsuranTerakhir = $semuaAngsuran->last()->id === $angsuran->id;
+
+        // Hitung total denda hanya jika angsuran terakhir
+        $totalDenda = $angsuranTerakhir ? $semuaAngsuran->sum('denda') : 0;
+
+        // Hitung jumlah dibayar: cicilan + total denda jika angsuran terakhir
+        $jumlahDibayar = $pinjaman->cicilan_pembayaran + $totalDenda;
+
+        // Simpan file bukti transfer
+        $folderPath = storage_path('app/public/buktitf');
+        if (!file_exists($folderPath)) {
+            mkdir($folderPath, 0777, true);
+        }
+
+        $buktiTransfer = $request->file('bukti_transfer');
+        $timestamp = now()->format('Y_m_d_H_i_s');
+        $fileName = $timestamp . "_" . $pinjaman->id . "_" . $buktiTransfer->getClientOriginalName();
+        $buktiTransfer->move($folderPath, $fileName);
+
+        // Update angsuran yang ditemukan
+        DB::table('angsuran_pinjaman')
+            ->where('id', $angsuran->id)
+            ->update([
+                'tanggal_bayar' => now(),
+                'jumlah_dibayar' => $jumlahDibayar,
+                'bukti_transfer' => 'storage/buktitf/' . $fileName,
+                'status' => 'lunas'
+            ]);
+
+        // Jika angsuran terakhir, ubah status pinjaman menjadi tidak_aktif
+        if ($angsuranTerakhir) {
+            DB::table('pinjamans')
+                ->where('id', $pinjaman->id)
+                ->update(['status_pinjaman' => 'tidak_aktif']);
+        }
+
+        return redirect()->route('pinjaman.index')->with('success', 'Pembayaran angsuran berhasil!');
+    }
+
+
 public function show($id)
 {
     // Ambil data pinjaman beserta user (tanpa duplikasi kolom)
@@ -283,14 +328,14 @@ public function show($id)
             'p.status_pinjaman',
             'u.name as user_name',
             'u.email as user_email',
-            'u.nip',
-            'u.no_ktp',
-            'u.tgl_lahir',
-            'u.no_hp',
-            'u.alamat',
-            'u.foto',
-            'u.foto_ktp',
-            'u.foto_dengan_ktp'
+            'p.nip',
+            'p.no_ktp',
+            'p.tgl_lahir',
+            'p.no_hp',
+            'p.alamat',
+            'p.foto',
+            'p.foto_ktp',
+            'p.foto_dengan_ktp'
         )
         ->where('p.id', $id)
         ->first();
@@ -309,49 +354,14 @@ public function show($id)
                                   $totalDenda = DB::table('angsuran_pinjaman')
                                   ->where('pinjaman_id', $id)
                                   ->sum('denda');
+                                  $totalJumlahDenda = DB::table('angsuran_pinjaman')
+                                ->where('pinjaman_id', $id)
+                                ->selectRaw('SUM(CAST(total_denda AS DECIMAL)) as total_denda') // Menggunakan CAST untuk konversi tipe data
+                                ->value('total_denda'); // Mengambil hasil penjumlahan
+
     // dd($pinjaman);
 
-    return view('admin.pinjam.show', compact('pinjaman', 'angsuranList', 'sisaAngsuran','totalDenda'));
+    return view('admin.pinjam.show', compact('pinjaman', 'angsuranList', 'sisaAngsuran','totalDenda','totalJumlahDenda'));
 }
 
-
-    public function update(Request $request, Pinjaman $pinjaman)
-    {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'nama' => 'required|string|max:255',
-            'alamat' => 'required|string',
-            'nip' => 'required|string|max:20',
-            'jumlah' => 'required|numeric',
-            'durasi' => 'required|integer',
-            'bunga' => 'required|numeric',
-            'no_rek' => 'required|string',
-            'status' => 'required|in:pending,approved,rejected'
-        ]);
-
-        $angsuran = ($request->jumlah + ($request->jumlah * $request->bunga / 100)) / $request->durasi;
-        $total_bayar = $angsuran * $request->durasi;
-
-        $pinjaman->update([
-            'user_id' => $request->user_id,
-            'nama' => $request->nama,
-            'alamat' => $request->alamat,
-            'nip' => $request->nip,
-            'jumlah' => $request->jumlah,
-            'durasi' => $request->durasi,
-            'bunga' => $request->bunga,
-            'angsuran_per_bulan' => $angsuran,
-            'total_bayar' => $total_bayar,
-            'no_rek' => $request->no_rek,
-            'status' => $request->status,
-        ]);
-
-        return redirect()->route('pinjaman.index')->with('success', 'Data pinjaman berhasil diperbarui.');
-    }
-
-    public function destroy(Pinjaman $pinjaman)
-    {
-        $pinjaman->delete();
-        return redirect()->route('pinjaman.index')->with('success', 'Data pinjaman berhasil dihapus.');
-    }
 }

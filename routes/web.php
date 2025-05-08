@@ -49,6 +49,8 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
     Route::group(['prefix' => 'sse'], function() {
         Route::get('TotalAllChart', [SSEController::class, 'TotalAllChart'])->name('TotalAllChart');
         Route::get('getTotalPinjaman', [SSEController::class, 'getTotalPinjaman'])->name('getTotalPinjaman');
+        Route::get('dendaPinjamanSSE', [SSEController::class, 'dendaPinjamanSSE'])->name('dendaPinjamanSSE');
+        Route::get('denda_pinjaman', [SSEController::class, 'denda_pinjaman'])->name('denda_pinjaman');
     });
     // Route::get('/Pinjam', [PinjamanController::class, 'index'])->name('Pinjam.index');
     // Route::get('/Crate-Pinjam', [PinjamanController::class, 'create'])->name('Pinjam.create');

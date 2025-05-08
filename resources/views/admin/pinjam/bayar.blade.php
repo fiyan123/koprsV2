@@ -29,7 +29,7 @@
 
           <div class="form-group">
             <label for="jumlah_dibayar">Jumlah Dibayar (Rp)</label>
-            <input type="text" class="form-control" value="Rp {{ number_format($pinjaman->cicilan_pembayaran, 0, ',', '.') }}" readonly>
+            <input type="text" class="form-control" value="Rp {{ number_format($jumlahDibayar, 0, ',', '.') }}" readonly>
           </div>
 
           <div class="form-group">

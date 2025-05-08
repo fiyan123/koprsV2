@@ -94,6 +94,7 @@
                     <div class="col-md-6 mb-2"><strong>Status Pinjaman:</strong> {{ ucfirst($pinjaman->status_pinjaman) }}</div>
                     <div class="col-md-6 mb-2"><strong>Sisa Angsuran:</strong> {{ $sisaAngsuran }} kali</div>
                     <div class="col-md-6 mb-2"><strong>Total Denda:</strong> Rp{{ number_format($totalDenda, 0, ',', '.') }}</div>
+                    <div class="col-md-6 mb-2"><strong>Total Jumlah Denda:</strong> {{ $totalJumlahDenda }}</div>
 
                 </div>
 
@@ -109,7 +110,8 @@
                                 <th>Jumlah Dibayar</th>
                                 <th>Tanggal Bayar</th>
                                 <th>Bukti Transfer</th>
-                                <th>Denda</th> <!-- Kolom Denda -->
+                                <th>jumlah Denda</th> <!-- Kolom Denda -->
+                                <th>Total Denda</th> <!-- Kolom Denda -->
                             </tr>
                         </thead>
                         <tbody>
@@ -126,6 +128,7 @@
                                         <span class="text-muted">Belum ada</span>
                                     @endif
                                 </td>
+                                <td>  {{ ($angsuran->total_denda) }}</td> <!-- Menampilkan Denda per Angsuran -->
                                 <td>Rp{{ number_format($angsuran->denda ?? 0, 0, ',', '.') }}</td> <!-- Menampilkan Denda per Angsuran -->
                             </tr>
                             @empty
