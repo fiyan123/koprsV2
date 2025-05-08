@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardMenuController;
 use App\Http\Controllers\DashboardUserController;
+use App\Http\Controllers\LaporanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,6 +101,7 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
         Route::patch('update/{id}', [SimpananController::class, 'update'])->name('simpanan.update');
         Route::post('destroy', [SimpananController::class, 'destroy'])->name('simpanan.destroy');
     });
+
     Route::group(['prefix' => 'saldo'], function() {
         Route::get('/', [SaldoController::class, 'index'])->name('saldo.index');
         Route::get('create', [SaldoController::class, 'create'])->name('saldo.create');
@@ -108,5 +110,15 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
         Route::get('show/{id}', [SaldoController::class, 'show'])->name('saldo.show');
         Route::patch('update/{id}', [SaldoController::class, 'update'])->name('saldo.update');
         Route::post('destroy', [SaldoController::class, 'destroy'])->name('saldo.destroy');
+    });
+
+    Route::group(['prefix' => 'laporan'], function() {
+        Route::get('/', [LaporanController::class, 'index'])->name('laporan');
+        Route::get('create', [LaporanController::class, 'create'])->name('laporan.create');
+        Route::post('store', [LaporanController::class, 'store'])->name('laporan.store');
+        Route::get('edit/{id}', [LaporanController::class, 'edit'])->name('laporan.edit');
+        Route::get('show/{id}', [LaporanController::class, 'show'])->name('laporan.show');
+        Route::patch('update/{id}', [LaporanController::class, 'update'])->name('laporan.update');
+        Route::post('destroy', [LaporanController::class, 'destroy'])->name('laporan.destroy');
     });
 });

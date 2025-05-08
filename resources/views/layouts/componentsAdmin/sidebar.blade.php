@@ -15,27 +15,30 @@
                 <span class="menu-title">Home</span>
             </a>
         </li>
-<!-- User Management -->
-<li class="nav-item">
-    @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
-        <a class="nav-link" data-toggle="collapse" href="#user-management" aria-expanded="false" aria-controls="user-management">
-            <i class="icon-layout menu-icon"></i>
-            <span class="menu-title">User Management</span>
-            <i class="menu-arrow"></i>
-        </a>
-        <div class="collapse" id="user-management">
-            <ul class="nav flex-column sub-menu">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('anggota.index') }}">Anggota</a>
-                </li>
-            </ul>
-        </div>
-    @endif
-</li>
+
+        <!-- User Management -->
+        <li class="nav-item">
+            @if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
+                <a class="nav-link" data-toggle="collapse" href="#user-management" aria-expanded="false"
+                    aria-controls="user-management">
+                    <i class="icon-layout menu-icon"></i>
+                    <span class="menu-title">User Management</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse" id="user-management">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('anggota.index') }}">Anggota</a>
+                        </li>
+                    </ul>
+                </div>
+            @endif
+        </li>
 
         <!-- Produk -->
         <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#produk-collapse" aria-expanded="false" aria-controls="produk-collapse">
+            <a class="nav-link" data-toggle="collapse" href="#produk-collapse" aria-expanded="false"
+                aria-controls="produk-collapse">
                 <i class="icon-layout menu-icon"></i>
                 <span class="menu-title">Produk</span>
                 <i class="menu-arrow"></i>
@@ -50,6 +53,14 @@
                     </li>
                 </ul>
             </div>
+        </li>
+
+        {{-- Export Dokumen --}}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('laporan') }}">
+                <i class="icon-file menu-icon"></i>
+                <span class="menu-title">Laporan Data</span>
+            </a>
         </li>
     </ul>
 </nav>
