@@ -70,7 +70,7 @@
 
     <script src="{{ asset('assetsAdmin/vendors/js/vendor.bundle.base.js') }}"></script>
     <script src="{{ asset('assetsAdmin/vendors/chart.js/Chart.min.js') }}"></script>
-    {{-- <script src="{{ asset('assetsAdmin/vendors/datatables.net/jquery.dataTables.js') }}"></script> --}}
+    <script src="{{ asset('assetsAdmin/vendors/datatables.net/jquery.dataTables.js') }}"></script>
     {{-- <script src="{{ asset('assetsAdmin/vendors/datatables.net-bs4/dataTables.bootstrap4.js') }}"></script> --}}
     {{-- <script src="{{ asset('assetsAdmin/js/dataTables.select.min.js') }}"></script> --}}
 
