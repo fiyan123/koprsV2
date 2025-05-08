@@ -15,12 +15,15 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id'); // relasi ke tabel users
             $table->string('nama');
+            $table->date('tgl_lahir'); // gunakan tipe date untuk tanggal lahir
+            $table->string('nip'); // asumsi NIP harus unik
+            $table->string('email');
+            $table->string('no_rek');
             $table->text('alamat');
-            $table->string('nip', 20)->unique(); // asumsi NIP harus unik
-            $table->string('no_hp', 20);
-            $table->enum('jenis_simpanan', ['pokok', 'wajib', 'sukarela', 'berjangka']); // jenis simpanan koperasi
+            $table->string('no_hp');
             $table->decimal('jumlah', 12, 2);
-            $table->string('bukti_tf')->nullable(); // bukti transfer opsional
+            $table->enum('jenis_simpanan', ['pokok', 'wajib', 'sukarela', 'berjangka']);
+            $table->string('bukti_tf')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')

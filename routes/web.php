@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SSEController;
 use App\Http\Controllers\SaldoController;
 use App\Http\Controllers\PinjamanController;
 use App\Http\Controllers\SimpananController;
@@ -44,6 +45,10 @@ Route::post('/logout', function () {
 
 Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
 
+    Route::group(['prefix' => 'sse'], function() {
+        Route::get('TotalAllChart', [SSEController::class, 'TotalAllChart'])->name('TotalAllChart');
+        Route::get('getTotalPinjaman', [SSEController::class, 'getTotalPinjaman'])->name('getTotalPinjaman');
+    });
     // Route::get('/Pinjam', [PinjamanController::class, 'index'])->name('Pinjam.index');
     // Route::get('/Crate-Pinjam', [PinjamanController::class, 'create'])->name('Pinjam.create');
 
