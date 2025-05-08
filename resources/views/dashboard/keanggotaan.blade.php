@@ -74,7 +74,7 @@
         </div>
     </div>
 
-    {{-- @include('layouts.components.footerDashboard') --}}
+    @include('layouts.components.footerDashboard')
     @include('layouts.components.copyright')
 
     <!-- Back to Top -->

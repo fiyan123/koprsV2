@@ -354,7 +354,7 @@
     <!-- Program Kerja End -->
 
     <!-- Appoinment Start -->
-    <div class="container-fluid appoinment mt-6 py-5 wow fadeIn" data-wow-delay="0.1s" id="hubungiKami">
+    {{-- <div class="container-fluid appoinment mt-6 py-5 wow fadeIn" data-wow-delay="0.1s" id="hubungiKami">
         <div class="container pt-5">
             <div class="row gy-5 gx-0">
                 <div class="col-lg-6 pe-lg-5 wow fadeIn" data-wow-delay="0.3s">
@@ -428,11 +428,11 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     <!-- Appoinment End -->
 
     <!-- Footer Start -->
-    {{-- @include('layouts.components.footerDashboard') --}}
+    @include('layouts.components.footerDashboard')
     <!-- Footer End -->
 
     <!-- Copyright Start -->

@@ -28,28 +28,45 @@ class RegisterController extends Controller
 
         // Validasi form
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:users,name',
+            'name' => 'required|string|unique:users,name',
             'email' => 'required|email|unique:users,email',
             'password' => ['required', 'confirmed'],
             'nip' => 'nullable|unique:users,nip',
             'alamat' => 'nullable|string',
-            'noktp' => 'nullable|string|max:50',
+            'no_ktp' => 'nullable|string|max:50|unique:users,no_ktp',
             'tgl_lahir' => 'nullable|date',
-            'no_hp' => 'nullable|string|max:20',
-            // 'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // 2MB max
+            'no_hp' => 'nullable|string|max:20|unique:users,no_hp',
+            'foto' => 'required|image|mimes:jpg,jpeg,png|max:5120',
+            'foto_ktp' => 'required|image|mimes:jpg,jpeg,png|max:5120',
+            'foto_dengan_ktp' => 'required|image|mimes:jpg,jpeg,png|max:5120',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withInput()->with('toast_error', $validator->errors()->first());
         }
 
-        // Upload foto jika ada
-        // $fotoPath = null;
-        // if ($request->hasFile('foto')) {
-        //     $fotoPath = $request->file('foto')->store('foto_user', 'public');
-        // }
+        // Validasi dan upload file jika ada
+        $year = now()->year;
 
-        // Simpan user
+        // Cek apakah file foto, foto_ktp, atau foto_dengan_ktp ada, jika tidak validasi gagal
+        if (!$request->hasFile('foto') || !$request->file('foto')->isValid()) {
+            return redirect()->back()->withInput()->with('toast_error', 'Foto harus diunggah dan valid.');
+        }
+
+        if (!$request->hasFile('foto_ktp') || !$request->file('foto_ktp')->isValid()) {
+            return redirect()->back()->withInput()->with('toast_error', 'Foto KTP harus diunggah dan valid.');
+        }
+
+        if (!$request->hasFile('foto_dengan_ktp') || !$request->file('foto_dengan_ktp')->isValid()) {
+            return redirect()->back()->withInput()->with('toast_error', 'Foto dengan KTP harus diunggah dan valid.');
+        }
+
+        // Upload file dan simpan di storage/public
+        $foto = $request->file('foto')->store("foto_user/{$year}", 'public');
+        $fotoKtp = $request->file('foto_ktp')->store("foto_ktp/{$year}", 'public');
+        $fotoDenganKtp = $request->file('foto_dengan_ktp')->store("foto_dengan_ktp/{$year}", 'public');
+
+        // Simpan data user
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
@@ -57,13 +74,15 @@ class RegisterController extends Controller
         $user->email_verified_at = now();
         $user->nip = $request->nip;
         $user->alamat = $request->alamat;
-        $user->noktp = $request->noktp;
+        $user->no_ktp = $request->no_ktp;
         $user->tgl_lahir = $request->tgl_lahir;
         $user->no_hp = $request->no_hp;
-        // $user->foto = $fotoPath;
+        $user->foto = $foto;
+        $user->foto_ktp = $fotoKtp;
+        $user->foto_dengan_ktp = $fotoDenganKtp;
         $user->save();
+
         Auth::login($user);
         return redirect(route('dashboard'))->with('toast_success', 'Pendaftaran Berhasil, Selamat Datang! ' . Auth::user()->name);
-
     }
 }

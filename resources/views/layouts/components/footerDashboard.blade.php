@@ -2,11 +2,10 @@
     <div class="container py-5">
         <div class="row g-5">
             <div class="col-lg-4 col-md-6">
-                <h5 class="text-uppercase text-light mb-4">Our Office</h5>
-                <p class="mb-2"><i class="fa fa-map-marker-alt text-primary me-3"></i>123 Street, New York, USA
-                </p>
-                <p class="mb-2"><i class="fa fa-phone-alt text-primary me-3"></i>+012 345 67890</p>
-                <p class="mb-2"><i class="fa fa-envelope text-primary me-3"></i>info@example.com</p>
+                <h5 class="text-uppercase text-light mb-4">Nama Kantor</h5>
+                <p class="mb-2"><i class="fa fa-map-marker-alt text-primary me-3"></i>Alamat Lengkap Kantor</p>
+                <p class="mb-2"><i class="fa fa-phone-alt text-primary me-3"></i>Nomor Telepon</p>
+                <p class="mb-2"><i class="fa fa-envelope text-primary me-3"></i>Alamat Email</p>
                 <div class="d-flex pt-3">
                     <a class="btn btn-square btn-light me-2" href=""><i class="fab fa-twitter"></i></a>
                     <a class="btn btn-square btn-light me-2" href=""><i class="fab fa-facebook-f"></i></a>
@@ -15,21 +14,21 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <h5 class="text-uppercase text-light mb-4">Quick Links</h5>
-                <a class="btn btn-link" href="">About Us</a>
-                <a class="btn btn-link" href="">Contact Us</a>
-                <a class="btn btn-link" href="">Our Services</a>
-                <a class="btn btn-link" href="">Terms & Condition</a>
-                <a class="btn btn-link" href="">Support</a>
+                <h5 class="text-uppercase text-light mb-4">Lainnya</h5>
+                <a class="btn btn-link" href="">Nama Lainya</a>
+                <a class="btn btn-link" href="">Nama Lainya</a>
+                <a class="btn btn-link" href="">Nama Lainya</a>
+                <a class="btn btn-link" href="">Nama Lainya</a>
+                <a class="btn btn-link" href="">Nama Lainya</a>
             </div>
             <div class="col-lg-4 col-md-6">
-                <h5 class="text-uppercase text-light mb-4">Business Hours</h5>
-                <p class="text-uppercase mb-0">Monday - Friday</p>
-                <p>09:00 am - 07:00 pm</p>
-                <p class="text-uppercase mb-0">Saturday</p>
-                <p>09:00 am - 12:00 pm</p>
-                <p class="text-uppercase mb-0">Sunday</p>
-                <p>Closed</p>
+                <h5 class="text-uppercase text-light mb-4">Jam Kerja</h5>
+                <p class="text-uppercase mb-0">Nama Hari</p>
+                <p>Jam Kerja</p>
+                <p class="text-uppercase mb-0">Nama Hari</p>
+                <p>Jam Kerja</p>
+                <p class="text-uppercase mb-0">Nama Hari</p>
+                <p>Jam Kerja</p>
             </div>
         </div>
     </div>

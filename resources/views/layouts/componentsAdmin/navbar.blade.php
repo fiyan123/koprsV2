@@ -11,6 +11,11 @@
             <span class="icon-menu"></span>
         </button>
         <ul class="navbar-nav navbar-nav-right">
+            <li class="nav-item nav-profile">
+                <a class="nav-link" href="#">
+                    <img src="{{ asset('storage/' . Auth::user()->foto) }}" alt="profile" />
+                </a>
+            </li>
             <li class="nav-item dropdown">
                 <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                     class="logout-link">
