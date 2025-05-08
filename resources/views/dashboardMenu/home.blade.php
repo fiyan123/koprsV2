@@ -2,56 +2,41 @@
 
 @section('content')
     <div class="row">
-        <div class="col-md-3 mb-4 stretch-card transparent">
+        <div class="col-md-4 mb-4 stretch-card transparent">
             <div class="card card-tale">
                 <div class="card-body">
                     <p class="mb-4">Total Nasabah</p>
-                    <p class="fs-30 mb-2">4006</p>
+                    <p class="fs-30 mb-2" id="total-nasabah">0</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-4 stretch-card transparent">
+        <div class="col-md-4 mb-4 stretch-card transparent">
             <div class="card card-dark-blue">
                 <div class="card-body">
                     <p class="mb-4">Total Simpanan</p>
-                    <p class="fs-30 mb-2">61344</p>
+                    <p class="fs-30 mb-2" id="total-simpanan">0</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-4 stretch-card transparent">
+        <div class="col-md-4 mb-4 stretch-card transparent">
             <div class="card card-light-blue">
                 <div class="card-body">
                     <p class="mb-4">Total Pinjaman</p>
-                    <p class="fs-30 mb-2">34040</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-light-danger">
-                <div class="card-body">
-                    <p class="mb-4">Total Karyawan</p>
-                    <p class="fs-30 mb-2">47033</p>
+                    <p class="fs-30 mb-2" id="total-pinjaman">0</p>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-lg-6">
-            <div class="card mb-3">
-                <div id="container" style="width:100%; height:400px;"></div>
-            </div>
-        </div>
-
         <div class="col-lg-6">
             <div class="card mb-3">
                 <div id="container2" style="width:100%; height:400px;"></div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
+
+        <div class="col-lg-6">
+            <div class="card mb-3">
                 <div id="container3" style="width:100%; height:400px;"></div>
             </div>
         </div>
@@ -61,33 +46,6 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-            Highcharts.chart('container', {
-                chart: {
-                    type: 'bar'
-                },
-                title: {
-                    text: 'Jangka Waktu Pinjaman dan Simpanan'
-                },
-                xAxis: {
-                    categories: ['Simpanan', 'Pinjaman', 'lainnya'],
-                },
-                yAxis: {
-                    title: {
-                        text: 'Jangka Waktu'
-                    }
-                },
-                credits: {
-                    enabled: false,
-                },
-                series: [{
-                    name: 'Jane',
-                    data: [1, 0, 4]
-                }, {
-                    name: 'John',
-                    data: [5, 7, 3]
-                }]
-            });
-
             Highcharts.chart('container2', {
                 title: {
                     text: 'Kenaikan Pinjaman dan Simpanan',
