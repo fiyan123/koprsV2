@@ -44,8 +44,8 @@ Route::post('/logout', function () {
 
 Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
 
-    Route::get('/Pinjam', [PinjamanController::class, 'index'])->name('Pinjam.index');
-    Route::get('/Crate-Pinjam', [PinjamanController::class, 'create'])->name('Pinjam.create');
+    // Route::get('/Pinjam', [PinjamanController::class, 'index'])->name('Pinjam.index');
+    // Route::get('/Crate-Pinjam', [PinjamanController::class, 'create'])->name('Pinjam.create');
 
     Route::group(['prefix' => 'home'], function() {
         Route::get('/', [DashboardMenuController::class, 'index'])->name('home');
@@ -55,6 +55,16 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
         Route::get('show/{id}', [DashboardMenuController::class, 'show'])->name('home.show');
         Route::patch('update/{id}', [DashboardMenuController::class, 'update'])->name('home.update');
         Route::post('destroy', [DashboardMenuController::class, 'destroy'])->name('home.destroy');
+    });
+
+    Route::group(['prefix' => 'pinjaman'], function() {
+        Route::get('/', [PinjamanController::class, 'index'])->name('pinjaman.index');
+        Route::get('create', [PinjamanController::class, 'create'])->name('pinjaman.create');
+        Route::post('store', [PinjamanController::class, 'store'])->name('pinjaman.store');
+        Route::get('edit/{id}', [PinjamanController::class, 'edit'])->name('pinjaman.edit');
+        Route::get('show/{id}', [PinjamanController::class, 'show'])->name('pinjaman.show');
+        Route::patch('update/{id}', [PinjamanController::class, 'update'])->name('pinjaman.update');
+        Route::post('destroy', [PinjamanController::class, 'destroy'])->name('pinjaman.destroy');
     });
 
     Route::group(['prefix' => 'simpanan'], function() {

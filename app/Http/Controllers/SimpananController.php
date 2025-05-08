@@ -13,8 +13,8 @@ class SimpananController extends Controller
     // Show all data for Simpanan
     public function index(Request $request)
     {
-        $data = Simpanan::with('user')->get();  // Eager load the user relationship
 
+        $data = Simpanan::with('user')->get();  // Eager load the user relationship
         if ($request->ajax()) {
             return DataTables::of($data)
                 ->addIndexColumn()
