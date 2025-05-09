@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Pinjaman;
 use App\Models\Simpanan;
+use App\Services\LaporanService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LaporanController extends Controller
 {
@@ -15,19 +17,21 @@ class LaporanController extends Controller
         return view('admin.laporan.index');
     }
 
-
-    public function laporan_simpanan(Request $request)
+    public function laporan_simpanan(Request $request, LaporanService $laporanService)
     {
         $tahun = $request->query('tahun');
         $bulan = $request->query('bulan');
 
-        // dd($tahun, $bulan);
-        $data = Simpanan::get();
+        $laporan = $laporanService->generateLaporanSimpanan();
 
-        $pdf = Pdf::loadView('pdf.export_simpanan', ['data' => $data]);
+        $pdf = Pdf::loadView('pdf.export_simpanan', [
+            'data' => $laporan['data'],
+            'total_all' => $laporan['total_all'],
+            'tahun' => $tahun,
+            'bulan' => $bulan,
+        ]);
         return $pdf->download('Laporan-Simpanan.pdf');
     }
-
 
     public function laporan_pinjaman(Request $request)
     {
