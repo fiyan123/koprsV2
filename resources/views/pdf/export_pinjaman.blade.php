@@ -48,7 +48,7 @@
             <tr>
                 <th>No</th>
                 <th>Tanggal</th>
-                <th>User ID</th>
+                <th>User</th>
                 <th>Jumlah Pinjaman</th>
                 <th>Total Bayar</th>
                 <th>Denda</th>
@@ -62,7 +62,7 @@
                 <tr>
                     <td>{{ $no++ }}</td>
                     <td>{{ \Carbon\Carbon::parse($row->created_at)->format('d-m-Y') }}</td>
-                    <td>{{ $row->user_id }}</td>
+                    <td>{{ $row->user_name }}</td>
                     <td>{{ number_format($row->jumlah_pinjaman, 2) }}</td>
                     <td>{{ number_format($row->total_bayar_pinjaman, 2) }}</td>
                     <td>{{ number_format($row->jumlah_denda, 2) }}</td>

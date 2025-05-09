@@ -50,9 +50,11 @@ public function getlaporanPinjam(Request $request)
         ->whereNotIn('pinjamans.status', ['rejected', 'pending'])
         ->where('pinjamans.status_pinjaman', '!=', 'tidak_aktif')
         ->join('angsuran_pinjaman', 'pinjamans.id', '=', 'angsuran_pinjaman.pinjaman_id')
+        ->join('users', 'pinjamans.user_id', '=', 'users.id')
         ->select(
             'pinjamans.created_at',
             DB::raw('MAX(pinjamans.user_id) as user_id'),
+            DB::raw('MAX(users.name) as user_name'),
             DB::raw('SUM(angsuran_pinjaman.denda) as jumlah_denda'),
             DB::raw('MAX(pinjamans.jumlah) as jumlah_pinjaman'),
             DB::raw('MAX(pinjamans.total_pembayaran) as total_bayar_pinjaman'),
@@ -109,25 +111,30 @@ public function getlaporanPinjam(Request $request)
 {
     // Ambil data total simpan per user
     $simpan = DB::table('simpanans')
-        ->select('user_id', DB::raw('SUM(jumlah) as sum_jumlah'), 'status')
+    ->join('users','simpanans.user_id','users.id')
+        ->select('user_id', DB::raw('SUM(jumlah) as sum_jumlah'), 'status','users.name')
         ->where('status', 'simpan')
-        ->groupBy('user_id', 'status')
+        ->groupBy('user_id', 'status','users.name')
         ->orderBy('user_id')
         ->get();
 
     // Ambil data total tarik per user
     $tarik = DB::table('simpanans')
-        ->select('user_id', DB::raw('SUM(jumlah) as sum_jumlah'), 'status')
+        ->join('users','simpanans.user_id','users.id')
+
+        ->select('user_id', DB::raw('SUM(jumlah) as sum_jumlah'), 'status','users.name')
         ->where('status', 'tarik')
-        ->groupBy('user_id', 'status')
+        ->groupBy('user_id', 'status','users.name')
         ->orderBy('user_id')
         ->get();
 
     // Ambil data total potong per user
     $potong = DB::table('simpanans')
-        ->select('user_id', DB::raw('SUM(jumlah) as sum_jumlah'), 'status')
+        ->join('users','simpanans.user_id','users.id')
+
+        ->select('user_id', DB::raw('SUM(jumlah) as sum_jumlah'), 'status','users.name')
         ->where('status', 'potong')
-        ->groupBy('user_id', 'status')
+        ->groupBy('user_id', 'status','users.name')
         ->orderBy('user_id')
         ->get();
 
@@ -149,6 +156,7 @@ public function getlaporanPinjam(Request $request)
         // Saldo akhir per user
         $saldo[$itemSimpan->user_id] = [
             'user_id' => $itemSimpan->user_id,
+            'user_name' => $itemSimpan->name,
             'saldo_akhir' => $itemSimpan->sum_jumlah - ($sumTarik + $sumPotong ),
             'status' => 'simpan'
         ];

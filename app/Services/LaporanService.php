@@ -10,16 +10,18 @@ class LaporanService
     {
         // Ambil data total simpan per user
         $simpan = DB::table('simpanans')
-            ->select('user_id', DB::raw('SUM(jumlah) as sum_jumlah'), 'status')
+                ->join('users','simpanans.user_id','users.id')
+
+            ->select('user_id', DB::raw('SUM(jumlah) as sum_jumlah'), 'status','users.name')
             ->where('status', 'simpan')
-            ->groupBy('user_id', 'status')
+            ->groupBy('user_id', 'status','users.name')
             ->orderBy('user_id');
 
         if ($tahun) {
-            $simpan->whereYear('created_at', $tahun);
+            $simpan->whereYear('simpanans.created_at', $tahun);
         }
         if ($bulan) {
-            $simpan->whereMonth('created_at', $bulan);
+            $simpan->whereMonth('simpanans.created_at', $bulan);
         }
         $simpan = $simpan->get();
 
@@ -70,7 +72,7 @@ class LaporanService
 
             // Saldo akhir per user
             $saldo[$itemSimpan->user_id] = [
-                'user_id' => $itemSimpan->user_id,
+                'user' => $itemSimpan->name,
                 'saldo_akhir' => $sumTarik + $sumPotong - $itemSimpan->sum_jumlah,
                 'status' => 'simpan'
             ];

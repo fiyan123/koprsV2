@@ -48,7 +48,7 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>User ID</th>
+                <th>User</th>
                 <th>Saldo Akhir</th>
                 <th>Status</th>
             </tr>
@@ -58,7 +58,7 @@
             @forelse ($data as $item)
                 <tr>
                     <td>{{ $no++ }}</td>
-                    <td>{{ $item['user_id'] }}</td>
+                    <td>{{ $item['user'] }}</td>
                     <td>Rp {{ number_format($item['saldo_akhir'], 0, ',', '.') }}</td>
                     <td>{{ $item['status'] }}</td>
                 </tr>

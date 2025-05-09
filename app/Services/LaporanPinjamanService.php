@@ -12,9 +12,12 @@ class LaporanPinjamanService
             ->whereNotIn('pinjamans.status', ['rejected', 'pending'])
             ->where('pinjamans.status_pinjaman', '!=', 'tidak_aktif')
             ->join('angsuran_pinjaman', 'pinjamans.id', '=', 'angsuran_pinjaman.pinjaman_id')
+            ->join('users', 'pinjamans.user_id', '=', 'users.id')
+
             ->select(
                 'pinjamans.created_at',
                 DB::raw('MAX(pinjamans.user_id) as user_id'),
+                DB::raw('MAX(users.name) as user_name'),
                 DB::raw('SUM(angsuran_pinjaman.denda) as jumlah_denda'),
                 DB::raw('MAX(pinjamans.jumlah) as jumlah_pinjaman'),
                 DB::raw('MAX(pinjamans.total_pembayaran) as total_bayar_pinjaman'),
