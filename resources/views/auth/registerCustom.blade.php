@@ -43,42 +43,42 @@
                                 <div class="form-group">
                                     <label for="name" class="form-label text-start">Nama Lengkap</label>
                                     <input type="text" name="name" class="form-control form-control-lg"
-                                        placeholder="Nama Lengkap" required>
+                                        placeholder="Nama Lengkap" value="{{ old('name') }}" required>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="email" class="form-label text-start">Email</label>
                                     <input type="email" name="email" class="form-control form-control-lg"
-                                        placeholder="Email" required>
+                                        placeholder="Email" value="{{ old('email') }}" required>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="nip" class="form-label text-start">NIP</label>
                                     <input type="text" name="nip" class="form-control form-control-lg"
-                                        placeholder="NIP">
+                                        placeholder="NIP" value="{{ old('nip') }}">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="alamat" class="form-label text-start">Alamat</label>
-                                    <textarea name="alamat" class="form-control form-control-lg" placeholder="Alamat Lengkap" rows="2"></textarea>
+                                    <textarea name="alamat" value="{{ old('alamat') }}" class="form-control form-control-lg" placeholder="Alamat Lengkap" rows="2"></textarea>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="no_ktp" class="form-label text-start">Nomor KTP</label>
                                     <input type="text" name="no_ktp" class="form-control form-control-lg"
-                                        placeholder="No. KTP">
+                                        placeholder="No. KTP" value="{{ old('no_ktp') }}">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="tgl_lahir" class="form-label text-start">Tanggal Lahir</label>
                                     <input type="date" name="tgl_lahir" class="form-control form-control-lg"
-                                        placeholder="Tanggal Lahir">
+                                        placeholder="Tanggal Lahir" value="{{ old('tgl_lahir') }}">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="no_hp" class="form-label text-start">Nomor HP</label>
                                     <input type="text" name="no_hp" class="form-control form-control-lg"
-                                        placeholder="No. HP">
+                                        placeholder="No. HP" value="{{ old('no_hp') }}">
                                 </div>
 
                                 <div class="form-group">
