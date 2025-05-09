@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Pinjaman;
 use App\Models\Simpanan;
-use App\Services\LaporanPinjamanService;
-use App\Services\LaporanService;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\LaporanService;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Services\LaporanPinjamanService;
 
 class LaporanController extends Controller
 {
