@@ -17,8 +17,8 @@
         </li>
 
         <!-- User Management -->
-        <li class="nav-item">
-            @if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
+        @if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
+            <li class="nav-item">
                 <a class="nav-link" data-toggle="collapse" href="#user-management" aria-expanded="false"
                     aria-controls="user-management">
                     <i class="icon-layout menu-icon"></i>
@@ -32,8 +32,15 @@
                         </li>
                     </ul>
                 </div>
-            @endif
-        </li>
+            </li>
+            {{-- Export Dokumen --}}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('laporan') }}">
+                    <i class="icon-file menu-icon"></i>
+                    <span class="menu-title">Laporan Data</span>
+                </a>
+            </li>
+        @endif
 
         <!-- Produk -->
         <li class="nav-item">
@@ -53,14 +60,6 @@
                     </li>
                 </ul>
             </div>
-        </li>
-
-        {{-- Export Dokumen --}}
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('laporan') }}">
-                <i class="icon-file menu-icon"></i>
-                <span class="menu-title">Laporan Data</span>
-            </a>
         </li>
     </ul>
 </nav>

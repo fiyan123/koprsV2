@@ -25,13 +25,18 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="bulan" class="form-label">Data Bulan</label>
-                            <select class="form-control" id="bulan">
-                                <option value="null">Pilih Bulan</option>
+                            <select class="form-control" id="bulan" name="bulan">
+                                @php
+                                    $currentMonth = \Carbon\Carbon::now()->month;
+                                @endphp
                                 @for ($month = 1; $month <= 12; $month++)
                                     @php
                                         $carbonMonth = \Carbon\Carbon::create()->month($month);
                                     @endphp
-                                    <option value="{{ $carbonMonth->format('m') }}">{{ $carbonMonth->format('F') }}</option>
+                                    <option value="{{ $carbonMonth->format('m') }}"
+                                        {{ $month == $currentMonth ? 'selected' : '' }}>
+                                        {{ $carbonMonth->format('F') }}
+                                    </option>
                                 @endfor
                             </select>
                         </div>
@@ -59,12 +64,12 @@
                                 <div class="d-flex">
                                     <div style="width: 150px;">Total Simpanan</div>
                                     <div class="me-3">:</div>
-                                    <div>Rp. 10.000.000</div>
+                                    <div class="jumlah-simpanan">0</div>
                                 </div>
                                 <div class="d-flex">
                                     <div style="width: 150px;">Jumlah Anggota</div>
                                     <div class="me-3">:</div>
-                                    <div>120</div>
+                                    <div class="jumlah-anggota-menyimpan">0</div>
                                 </div>
                             </div>
                         </div>
@@ -102,6 +107,35 @@
 @endsection
 @push('scripts')
     <script>
+        function fetchData(tahun = null, bulan = null) {
+            $.ajax({
+                url: "{{ route('laporan.getDataAjax') }}",
+                method: 'GET',
+                data: {
+                    tahun: tahun,
+                    bulan: bulan
+                },
+                success: function(response) {
+                    const jumlahSimpanan = new Intl.NumberFormat('id-ID').format(response.jumlah_simpanan);
+                    $('.jumlah-simpanan').text('Rp. ' + jumlahSimpanan);
+                    $('.jumlah-anggota-menyimpan').text(response.jumlah_anggota);
+                },
+                error: function(xhr) {
+                    console.error("Gagal memuat data:", xhr.responseText);
+                }
+            });
+        }
+
+        function filterData() {
+            const tahun = $('#tahun').val();
+            const bulan = $('#bulan').val();
+            fetchData(tahun, bulan);
+        }
+
+        $(document).ready(function() {
+            fetchData();
+        });
+
         document.getElementById('exportSimpanan').addEventListener('click', function(e) {
             e.preventDefault();
             let tahun = document.getElementById('tahun').value;
