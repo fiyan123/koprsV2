@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pinjaman;
 use App\Models\Simpanan;
+use App\Services\LaporanPinjamanService;
 use App\Services\LaporanService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -30,6 +31,20 @@ class LaporanController extends Controller
         ]);
     }
 
+    public function getDataPinjaman(Request $request, LaporanPinjamanService $laporanPinjamanService)
+    {
+        $tahun = $request->query('tahun') ?? now()->year;
+        $bulan = $request->query('bulan') ?? now()->month;
+
+        $laporan = $laporanPinjamanService->generatelaporanPinjaman($tahun, $bulan);
+        $pdf = PDF::loadView('pdf.export_pinjaman', [
+            'laporan' => $laporan,
+            'tahun' => $tahun,
+            'bulan' => $bulan,
+        ]);
+        return $pdf->download('Laporan-Pinjaman.pdf');
+    }
+
     public function laporan_simpanan(Request $request, LaporanService $laporanService)
     {
         $tahun = $request->query('tahun') ?? now()->year;
@@ -46,21 +61,20 @@ class LaporanController extends Controller
         return $pdf->download('Laporan-Simpanan.pdf');
     }
 
-    public function laporan_pinjaman(Request $request)
+    public function laporan_pinjaman(Request $request, LaporanPinjamanService $laporanPinjamanService)
     {
-        $tahun = $request->query('tahun');
-        $bulan = $request->query('bulan');
+        $tahun = $request->query('tahun') ?? now()->year;
+        $bulan = $request->query('bulan') ?? now()->month;
 
-        // dd($tahun, $bulan);
-        $data = Pinjaman::get();
-
-        $pdf = Pdf::loadView('pdf.export_pinjaman', ['data' => $data]);
+        $laporan = $laporanPinjamanService->generatelaporanPinjaman($tahun, $bulan);
+        $pdf = PDF::loadView('pdf.export_pinjaman', [
+            'laporan' => $laporan,
+            'tahun' => $tahun,
+            'bulan' => $bulan,
+        ]);
         return $pdf->download('Laporan-Pinjaman.pdf');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //

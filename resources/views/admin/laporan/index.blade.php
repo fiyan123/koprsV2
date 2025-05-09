@@ -89,12 +89,12 @@
                                 <div class="d-flex">
                                     <div style="width: 150px;">Total Pinjaman</div>
                                     <div class="me-3">:</div>
-                                    <div>Rp. 25.000.000</div>
+                                    <div class="jumlah-pinjaman">0</div>
                                 </div>
                                 <div class="d-flex">
                                     <div style="width: 150px;">Jumlah Peminjam</div>
                                     <div class="me-3">:</div>
-                                    <div>85</div>
+                                    <div class="jumlah-peminjam">0</div>
                                 </div>
                             </div>
                         </div>
@@ -126,14 +126,36 @@
             });
         }
 
+        function fetchDataPinjaman(tahun = null, bulan = null) {
+            $.ajax({
+                url: "{{ route('laporan.getPinjaman') }}",
+                method: 'GET',
+                data: {
+                    tahun: tahun,
+                    bulan: bulan
+                },
+                success: function(response) {
+                    const jumlahPinjaman = new Intl.NumberFormat('id-ID').format(response.total_jumlah_pinjaman_all);
+                    $('.jumlah-pinjaman').text('Rp. ' + jumlahPinjaman);
+                    $('.jumlah-peminjam').text(response.total_user_pinjaman_all);
+                },
+                error: function(xhr) {
+                    console.error("Gagal memuat data:", xhr.responseText);
+                }
+            });
+        }
+
+
         function filterData() {
             const tahun = $('#tahun').val();
             const bulan = $('#bulan').val();
             fetchData(tahun, bulan);
+            fetchDataPinjaman(tahun, bulan);
         }
 
         $(document).ready(function() {
             fetchData();
+            fetchDataPinjaman();
         });
 
         document.getElementById('exportSimpanan').addEventListener('click', function(e) {
