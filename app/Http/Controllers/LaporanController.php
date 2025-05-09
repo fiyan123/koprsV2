@@ -72,6 +72,7 @@ class LaporanController extends Controller
         return response()->json([
             'total_user_pinjaman_all' => $laporan['total_user_pinjaman_all'],
             'total_jumlah_pinjaman_all' => $laporan['total_jumlah_pinjaman_all'],
+            
         ]);
     }
     }

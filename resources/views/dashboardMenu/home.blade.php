@@ -1,43 +1,80 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="row">
-        <div class="col-md-4 mb-4 stretch-card transparent">
-            <div class="card card-tale">
-                <div class="card-body">
-                    <p class="mb-4">Total Nasabah</p>
-                    <p class="fs-30 mb-2" id="total-nasabah">0</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4 stretch-card transparent">
-            <div class="card card-dark-blue">
-                <div class="card-body">
-                    <p class="mb-4">Total Simpanan</p>
-                    <p class="fs-30 mb-2" id="total-simpanan">0</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4 stretch-card transparent">
-            <div class="card card-light-blue">
-                <div class="card-body">
-                    <p class="mb-4">Total Pinjaman</p>
-                    <p class="fs-30 mb-2" id="total-pinjaman">0</p>
+    <div class="row mb-4">
+        <!-- Filter Section -->
+        <div class="col-12">
+            <div class="card p-3">
+                <div class="row align-items-end">
+                    <div class="col-md-4 mb-3">
+                        <label for="tahun" class="form-label">Data Tahun</label>
+                        <select class="form-control" id="tahun">
+                            @php $currentYear = \Carbon\Carbon::now()->year; @endphp
+                            @for ($year = $currentYear; $year >= 2020; $year--)
+                                <option value="{{ $year }}">{{ $year }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="bulan" class="form-label">Data Bulan</label>
+                        <select class="form-control" id="bulan" name="bulan">
+                            @php $currentMonth = \Carbon\Carbon::now()->month; @endphp
+                            @for ($month = 1; $month <= 12; $month++)
+                                @php $carbonMonth = \Carbon\Carbon::create()->month($month); @endphp
+                                <option value="{{ $carbonMonth->format('m') }}"
+                                    {{ $month == $currentMonth ? 'selected' : '' }}>
+                                    {{ $carbonMonth->format('F') }}
+                                </option>
+                            @endfor
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button type="button" class="btn btn-primary w-50" id="btnFilter" onclick="filterData()">
+                            <i class="ri-search-line"></i> Cari Data
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card card-tale text-center p-3">
+                <p class="mb-2">Total Nasabah</p>
+                <h3 id="total-nasabah" class="fs-30 mb-0">0</h3>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card card-dark-blue text-center p-3">
+                <p class="mb-2">Total Simpanan</p>
+                <h3 id="total-simpanan" class="fs-30 mb-0">0</h3>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card card-light-blue text-center p-3">
+                <p class="mb-2">Total Pinjaman</p>
+                <h3 id="total-pinjaman" class="fs-30 mb-0">0</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
     <div class="row">
-        <div class="col-lg-6">
-            <div class="card mb-3">
-                <div id="container2" style="width:100%; height:400px;"></div>
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div id="container2" style="width:100%; height:400px;"></div>
+                </div>
             </div>
         </div>
 
-        <div class="col-lg-6">
-            <div class="card mb-3">
-                <div id="container3" style="width:100%; height:400px;"></div>
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div id="container3" style="width:100%; height:400px;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -45,87 +82,80 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
-            Highcharts.chart('container2', {
-                title: {
-                    text: 'Kenaikan Pinjaman dan Simpanan',
-                    align: 'left'
+        function renderChartSimpanan(tahun = null, bulan = null) {
+            $.ajax({
+                url: "{{ route('laporan.getDataAjax') }}",
+                method: 'GET',
+                data: {
+                    tahun: tahun,
+                    bulan: bulan
                 },
-                yAxis: {
-                    title: {
-                        text: 'Hitungan Angka Pinjaman dan Simpanan'
-                    }
-                },
-
-                xAxis: {
-                    accessibility: {
-                        rangeDescription: 'Range: 2010 to 2022'
-                    }
-                },
-
-                legend: {
-                    layout: 'vertical',
-                    align: 'right',
-                    verticalAlign: 'middle'
-                },
-
-                plotOptions: {
-                    series: {
-                        label: {
-                            connectorAllowed: false
+                success: function(response) {
+                    Highcharts.chart('container2', {
+                        title: {
+                            text: `Jumlah Simpanan dan Anggota (${tahun}/${bulan})`,
+                            align: 'left'
                         },
-                        pointStart: 2010
-                    }
-                },
-
-                series: [{
-                    name: 'Karyawan',
-                    data: [
-                        43934, 48656, 65165, 81827, 112143, 142383,
-                        171533, 165174, 155157, 161454, 154610, 168960, 171558
-                    ]
-                }, {
-                    name: 'Nasabah',
-                    data: [
-                        24916, 37941, 29742, 29851, 32490, 30282,
-                        38121, 36885, 33726, 34243, 31050, 33099, 33473
-                    ]
-                }, {
-                    name: 'Perusahaan',
-                    data: [
-                        11744, 30000, 16005, 19771, 20185, 24377,
-                        32147, 30912, 29243, 29213, 25663, 28978, 30618
-                    ]
-                }, {
-                    name: 'Perorangan',
-                    data: [
-                        null, null, null, null, null, null, null,
-                        null, 11164, 11218, 10077, 12530, 16585
-                    ]
-                }, {
-                    name: 'Lainnya',
-                    data: [
-                        21908, 5548, 8105, 11248, 8989, 11816, 18274,
-                        17300, 13053, 11906, 10073, 11471, 11648
-                    ]
-                }],
-
-                responsive: {
-                    rules: [{
-                        condition: {
-                            maxWidth: 500
-                        },
-                        chartOptions: {
-                            legend: {
-                                layout: 'horizontal',
-                                align: 'center',
-                                verticalAlign: 'bottom'
+                        yAxis: {
+                            title: {
+                                text: 'Jumlah'
                             }
+                        },
+                        xAxis: {
+                            categories: [`${tahun}/${bulan}`]
+                        },
+                        legend: {
+                            layout: 'vertical',
+                            align: 'right',
+                            verticalAlign: 'middle'
+                        },
+                        plotOptions: {
+                            series: {
+                                label: {
+                                    connectorAllowed: false
+                                },
+                            }
+                        },
+                        series: [{
+                            name: 'Jumlah Simpanan',
+                            data: [response.count_jumlah_all]
+                        }, {
+                            name: 'Jumlah Anggota',
+                            data: [response.jumlah_anggota]
+                        }],
+                        responsive: {
+                            rules: [{
+                                condition: {
+                                    maxWidth: 500
+                                },
+                                chartOptions: {
+                                    legend: {
+                                        layout: 'horizontal',
+                                        align: 'center',
+                                        verticalAlign: 'bottom'
+                                    }
+                                }
+                            }]
                         }
-                    }]
+                    });
+                },
+                error: function(xhr) {
+                    console.error("Gagal memuat data:", xhr.responseText);
                 }
             });
+        }
 
+        function filterData() {
+            const tahun = $('#tahun').val();
+            const bulan = $('#bulan').val();
+            renderChartSimpanan(tahun, bulan);
+        }
+
+        // Panggil default saat halaman pertama kali dimuat
+        $(document).ready(function() {
+            const tahun = $('#tahun').val();
+            const bulan = $('#bulan').val();
+            renderChartSimpanan(tahun, bulan);
             Highcharts.chart('container3', {
                 chart: {
                     type: 'pie',
