@@ -103,32 +103,42 @@
                 success: function(response) {
                     const jumlahSimpanan = parseFloat(response.count_jumlah_all.replace(/,/g, '')) || 0;
                     const jumlahPinjaman = parseFloat(response.total_jumlah_pinjaman_all.replace(/,/g, '')) ||
-                    0;
-                    const jumlahAnggota = response.count_nasabah_all || 0;
+                        0;
+                    const jumlahAnggota = parseInt(response.count_nasabah_all) || 0;
 
                     Highcharts.chart('container2', {
+                        chart: {
+                            type: 'column'
+                        },
                         title: {
                             text: `Jumlah Simpanan, Pinjaman dan Anggota (${tahun}/${bulan})`,
                             align: 'left'
                         },
+                        xAxis: {
+                            categories: ['Data Keuangan'],
+                            crosshair: true
+                        },
                         yAxis: {
+                            min: 0,
                             title: {
                                 text: 'Jumlah'
+                            },
+                            labels: {
+                                formatter: function() {
+                                    return this.value.toLocaleString('id-ID');
+                                }
                             }
                         },
-                        xAxis: {
-                            categories: [`${tahun}/${bulan}`]
-                        },
-                        legend: {
-                            layout: 'vertical',
-                            align: 'right',
-                            verticalAlign: 'middle'
+                        tooltip: {
+                            shared: false, // <== Ini kunci agar tidak digabung
+                            useHTML: true,
+                            pointFormat: '<b>{series.name}: {point.y:,.0f}</b>',
+                            valueDecimals: 2
                         },
                         plotOptions: {
-                            series: {
-                                label: {
-                                    connectorAllowed: false
-                                },
+                            column: {
+                                pointPadding: 0.2,
+                                borderWidth: 0
                             }
                         },
                         series: [{
@@ -146,21 +156,7 @@
                                 data: [jumlahAnggota],
                                 color: '#ffc107'
                             }
-                        ],
-                        responsive: {
-                            rules: [{
-                                condition: {
-                                    maxWidth: 500
-                                },
-                                chartOptions: {
-                                    legend: {
-                                        layout: 'horizontal',
-                                        align: 'center',
-                                        verticalAlign: 'bottom'
-                                    }
-                                }
-                            }]
-                        }
+                        ]
                     });
                 },
                 error: function(xhr) {
@@ -169,7 +165,7 @@
             });
         }
 
-        function loadBarCharts() {
+        function loadBarChart1() {
             const tahun = $('#tahun').val();
             const bulan = $('#bulan').val();
 
@@ -182,58 +178,113 @@
                 },
                 success: function(response) {
                     const jumlahSimpanan = parseFloat(response.count_jumlah_all.replace(/,/g, '')) || 0;
-                    const jumlahPinjaman = parseFloat(response.total_jumlah_pinjaman_all.replace(/,/g, '')) ||
-                        0;
-                    const jumlahNasabah = response.count_nasabah_all || 0;
+                    const jumlahNasabah = parseInt(response.count_nasabah_all) || 0;
 
-                    // Container 1: Simpanan
+                    // Container 1: Simpanan (Pie)
                     Highcharts.chart('container1', {
                         chart: {
-                            type: 'column'
+                            type: 'pie'
                         },
                         title: {
-                            text: 'Data Simpanan'
+                            text: `Komposisi Data Simpanan (${tahun}/${bulan})`
                         },
-                        xAxis: {
-                            categories: ['Jumlah Nasabah', 'Total Simpanan']
+                        tooltip: {
+                            pointFormat: '{series.name}: <b>{point.y:,.0f}</b>'
                         },
-                        yAxis: {
-                            title: {
-                                text: 'Nilai (Rp)'
+                        plotOptions: {
+                            pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                dataLabels: {
+                                    enabled: true,
+                                    format: '<b>{point.name}</b>: {point.y:,.0f}',
+                                    style: {
+                                        fontSize: '13px'
+                                    }
+                                }
                             }
                         },
                         series: [{
                             name: 'Simpanan',
-                            data: [jumlahNasabah, jumlahSimpanan],
-                            color: '#007bff'
-                        }]
-                    });
-
-                    // Container 3: Pinjaman
-                    Highcharts.chart('container3', {
-                        chart: {
-                            type: 'column'
-                        },
-                        title: {
-                            text: 'Data Pinjaman'
-                        },
-                        xAxis: {
-                            categories: ['Jumlah Nasabah', 'Total Pinjaman']
-                        },
-                        yAxis: {
-                            title: {
-                                text: 'Nilai (Rp)'
-                            }
-                        },
-                        series: [{
-                            name: 'Pinjaman',
-                            data: [jumlahNasabah, jumlahPinjaman],
-                            color: '#28a745'
+                            colorByPoint: true,
+                            data: [{
+                                    name: 'Jumlah Nasabah',
+                                    y: jumlahNasabah
+                                },
+                                {
+                                    name: 'Total Simpanan',
+                                    y: jumlahSimpanan
+                                }
+                            ]
                         }]
                     });
                 },
                 error: function(xhr) {
                     console.error("Gagal mengambil data rekap:", xhr.responseText);
+                }
+            });
+        }
+
+        function loadBarChart2() {
+            const tahun = $('#tahun').val();
+            const bulan = $('#bulan').val();
+
+            $.ajax({
+                url: "{{ route('getTotalPinjamanHome') }}",
+                method: 'GET',
+                data: {
+                    tahun,
+                    bulan
+                },
+                success: function(response) {
+                    const totalPinjaman = parseFloat(response.data.replace(/,/g, '')) || 0;
+                    const totalBayar = parseFloat(response.total_bayar.replace(/,/g, '')) || 0;
+                    const totalDenda = parseFloat(response.total_denda.replace(/,/g, '')) || 0;
+                    const totalKeuntungan = parseFloat(response.total_keuntungan.replace(/,/g, '')) || 0;
+
+                    Highcharts.chart('container3', {
+                        chart: {
+                            type: 'pie',
+                            zooming: {
+                                type: 'xy'
+                            },
+                            panning: {
+                                enabled: true,
+                                type: 'xy'
+                            },
+                            panKey: 'shift'
+                        },
+                        title: {
+                            text: `Komposisi Detail Pinjaman (${tahun}/${bulan})`
+                        },
+                        tooltip: {
+                            pointFormat: '{series.name}: <b>{point.y:,.0f}</b>'
+                        },
+                        series: [{
+                            name: 'Detail',
+                            colorByPoint: true,
+                            data: [{
+                                    name: 'Total Pinjaman',
+                                    y: totalPinjaman
+                                },
+                                {
+                                    name: 'Total Pembayaran',
+                                    y: totalBayar
+                                },
+                                {
+                                    name: 'Total Denda',
+                                    y: totalDenda
+                                },
+                                {
+                                    name: 'Total Keuntungan',
+                                    y: totalKeuntungan
+                                }
+                            ]
+                        }]
+                    });
+                },
+                error: function(xhr) {
+                    console.error("Gagal mengambil data pinjaman:", xhr.responseText);
                 }
             });
         }
@@ -247,7 +298,6 @@
                     bulan: bulan
                 },
                 success: function(response) {
-                    console.log(response);
                     $('#total-nasabah').text(response.count_nasabah_all);
                     $('#total-simpanan').text(response.count_jumlah_all);
                     $('#total-pinjaman').text(response.total_jumlah_pinjaman_all);
@@ -262,7 +312,8 @@
             const tahun = $('#tahun').val();
             const bulan = $('#bulan').val();
             renderChartSimpanan(tahun, bulan);
-            loadBarCharts(tahun, bulan);
+            loadBarChart1(tahun, bulan);
+            loadBarChart2(tahun, bulan);
             renderData(tahun, bulan);
         }
 
@@ -271,7 +322,8 @@
             const tahun = $('#tahun').val();
             const bulan = $('#bulan').val();
             renderChartSimpanan(tahun, bulan);
-            loadBarCharts(tahun, bulan);
+            loadBarChart1(tahun, bulan);
+            loadBarChart2(tahun, bulan);
             renderData(tahun, bulan);
         });
     </script>
