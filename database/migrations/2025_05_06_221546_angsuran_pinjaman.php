@@ -22,6 +22,7 @@ return new class extends Migration
         $table->decimal('denda', 12, 2)->default(0); // denda kalau telat bayar
         $table->string('total_denda')->default(0); // denda kalau telat bayar
         $table->enum('status', ['lunas', 'belum_lunas'])->default('belum_lunas');
+        $table->enum('metode_pembayaran', ['transfer', 'tabungan'])->nullable();
         $table->string('bukti_transfer')->nullable();  // Kolom untuk path atau nama file bukti transfer
 
         $table->timestamps();

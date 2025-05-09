@@ -1,8 +1,11 @@
 @extends('layouts.admin')
+
 @section('title', 'Simpanan')
+
 @section('breadcrumb')
     <x-dashboard.breadcrumb title="Data Simpanan" page="Home" active="Simpanan" route="{{ route('home') }}" />
 @endsection
+
 @section('content')
     <div class="row">
         <div class="col-lg-12 grid-margin stretch-card">
@@ -14,18 +17,18 @@
                     <div class="table-responsive">
                         <table id="dataTable" class="table table-bordered">
                             <thead>
-                                <tr class="fw-bolder">
-                                    <th scope="col">No</th>
-                                    <th scope="col" class="min-w-100px">Nama</th>
-                                    <th scope="col" class="min-w-100px">Alamat</th>
-                                    <th scope="col" class="min-w-100px">NIP</th>
-                                    <th scope="col" class="min-w-80px">Nomor HP</th>
-                                    <th scope="col" class="min-w-80px">Jumlah</th>
-                                    <th scope="col" class="min-w-80px">Bukti Transfer</th>
-                                    <th scope="col" class="min-w-80px">Actions</th>
+                                <tr class="fw-bold text-center">
+                                    <th>No</th>
+                                    <th>Nama</th>
+                                    <th>NIP</th>
+                                    <th>Jumlah</th>
+                                    <th>Status</th>
+                                    {{-- <th>Jenis Simpanan</th> --}}
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="">
+                            <tbody>
+                                <!-- Data akan di-load melalui AJAX -->
                             </tbody>
                         </table>
                     </div>
@@ -38,107 +41,68 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-            loadData();
+            const table = $('#dataTable').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: "{{ route('simpanan.index') }}",
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', className: "text-center" },
+                    { data: 'nama', name: 'nama' },
+                    { data: 'nip', name: 'nip' },
+                    { data: 'jumlah', name: 'jumlah' },
+                    { data: 'status', name: 'status' },
+                    // { data: 'jenis_simpanan', name: 'jenis_simpanan' },
+                    { data: 'action', name: 'action', orderable: false, searchable: false, className: "text-center" }
+                ],
+                columnDefs: [{
+                    defaultContent: "-",
+                    targets: "_all"
+                }]
+            });
 
+            // DELETE HANDLER
             $(document).on('click', '.delete', function() {
-                let id = $(this).attr('id')
+                const id = $(this).attr('id');
+
                 Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
+                    title: 'Yakin ingin menghapus?',
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
+                    confirmButtonText: 'Ya, hapus!'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
                             url: "{{ route('simpanan.destroy') }}",
-                            type: 'post',
+                            type: 'POST',
                             data: {
                                 id: id,
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function(res, status) {
-                                if (status = '200') {
-                                    setTimeout(() => {
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Data Berhasil Dihapus',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        }).then((res) => {
-                                            $('#dataTable').DataTable()
-                                                .ajax.reload()
-                                        })
-                                    });
-                                }
+                            success: function(res) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil!',
+                                    text: 'Data berhasil dihapus.',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                                table.ajax.reload();
                             },
                             error: function(xhr) {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Oops...',
-                                    text: xhr.responseJSON.text,
-                                })
+                                    title: 'Gagal!',
+                                    text: xhr.responseJSON.message || 'Terjadi kesalahan.',
+                                });
                             }
-                        })
+                        });
                     }
-                })
+                });
             });
         });
-
-        function loadData() {
-            table = $('#dataTable').DataTable({
-                pageLength: 10,
-                searching: true,
-                serverSide: true,
-                processing: true,
-                responsive: true,
-                ajax: {
-                    url: "{{ route('simpanan.index') }}",
-                    type: 'GET',
-                },
-
-                columnDefs: [{
-                    "defaultContent": "-",
-                    "targets": "_all"
-                }],
-                columns: [{
-                        data: 'DT_RowIndex',
-                    },
-                    {
-                        data: 'nama',
-                        name: 'nama',
-                    },
-                    {
-                        data: 'alamat',
-                        name: 'alamat',
-                    },
-                    {
-                        data: 'nip',
-                        name: 'nip',
-                    },
-                    {
-                        data: 'no_hp',
-                        name: 'no_hp',
-                    },
-                    {
-                        data: 'jumlah',
-                        name: 'jumlah',
-                    },
-                    {
-                        data: 'bukti_tf',
-                        name: 'bukti_tf',
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        className: "text-center",
-                        orderable: false,
-                        searchable: false
-                    },
-                ],
-            });
-        }
     </script>
 @endpush

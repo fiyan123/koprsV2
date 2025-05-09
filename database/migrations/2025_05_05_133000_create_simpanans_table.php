@@ -15,14 +15,15 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id'); // relasi ke tabel users
             $table->string('nama');
+            $table->string('email');
             $table->date('tgl_lahir'); // gunakan tipe date untuk tanggal lahir
             $table->string('nip'); // asumsi NIP harus unik
-            $table->string('email');
-            $table->string('no_rek');
             $table->text('alamat');
             $table->string('no_hp');
+            $table->string('no_rek')->nullable();
             $table->decimal('jumlah', 12, 2);
-            $table->enum('jenis_simpanan', ['pokok', 'wajib', 'sukarela', 'berjangka']);
+            $table->enum('status', ['simpan', 'tarik','potong']);
+            // $table->enum('jenis_simpanan', ['pokok', 'wajib', 'sukarela', 'berjangka']);
             $table->string('bukti_tf')->nullable();
             $table->timestamps();
 

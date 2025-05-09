@@ -108,6 +108,7 @@
                                 <th>#</th>
                                 <th>Angsuran ke</th>
                                 <th>Jumlah Dibayar</th>
+                                <th>Pembayaran</th>
                                 <th>Tanggal Bayar</th>
                                 <th>Bukti Transfer</th>
                                 <th>jumlah Denda</th> <!-- Kolom Denda -->
@@ -121,11 +122,12 @@
                                 <td>{{ $angsuran->angsuran_ke }}</td>
                                 <td>Rp{{ number_format($angsuran->jumlah_dibayar ?? 0, 0, ',', '.') }}</td>
                                 <td>{{ $angsuran->tanggal_bayar ? \Carbon\Carbon::parse($angsuran->tanggal_bayar)->format('d-m-Y') : '-' }}</td>
+                                <td>{{ $angsuran->metode_pembayaran }}</td>
                                 <td>
                                     @if($angsuran->bukti_transfer)
                                         <a href="{{ asset($angsuran->bukti_transfer) }}" target="_blank">Lihat</a>
                                     @else
-                                        <span class="text-muted">Belum ada</span>
+                                        <span class="text-muted">tidak ada</span>
                                     @endif
                                 </td>
                                 <td>  {{ ($angsuran->total_denda) }}</td> <!-- Menampilkan Denda per Angsuran -->

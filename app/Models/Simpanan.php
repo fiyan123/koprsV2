@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Simpanan extends Model
 {
     use HasFactory;
+    protected $table = 'simpanans'; // Pastikan nama tabel sesuai
+    protected $guarded = ['id'];
+
 }

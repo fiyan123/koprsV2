@@ -51,7 +51,7 @@
                                     <input type="email" name="email" class="form-control form-control-lg"
                                         placeholder="Email" required>
                                 </div>
-{{--
+
                                 <div class="form-group">
                                     <label for="nip" class="form-label text-start">NIP</label>
                                     <input type="text" name="nip" class="form-control form-control-lg"
@@ -97,7 +97,7 @@
                                     <label for="foto_dengan_ktp">Foto Dengan KTP</label>
                                     <input type="file" name="foto_dengan_ktp" id="foto_dengan_ktp"
                                         class="form-control form-control-lg" accept="image/*" required>
-                                </div> --}}
+                                </div>
 
                                 <div class="form-group">
                                     <label for="password" class="form-label text-start">Password Akun</label>

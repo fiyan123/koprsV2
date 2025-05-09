@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Pinjaman;
+use App\Models\Simpanan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -20,7 +21,12 @@ class PinjamanController extends Controller
                     ->where('user_id', auth()->user()->id)
                     ->get();
             } else {
-                $data = Pinjaman::select('id', 'nama', 'tgl_lahir', 'nip', 'jumlah', 'status', 'status_pinjaman')->get();
+                $data = Pinjaman::select('id', 'nama', 'tgl_lahir', 'nip', 'jumlah', 'status', 'status_pinjaman')
+                ->where(function ($query) {
+                    $query->where('status', '!=', 'rejected')
+                          ->orWhere('status_pinjaman', '!=', 'tidak_aktif');
+                })
+                ->get();
             }
 
             return DataTables::of($data)
@@ -43,6 +49,18 @@ class PinjamanController extends Controller
                     if ($row->status == 'pending' && $row->status_pinjaman == 'aktif') {
                         $btn .= '<button class="btn btn-secondary me-1" disabled>Proses</button>';
                     }
+                    if (auth()->user()->hasRole('anggota') &&$row->status == 'rejected' && $row->status_pinjaman == 'tidak_aktif') {
+                        $btn .= '
+                            <form action="' . route('pinjaman.destroy') . '" method="POST" style="display:inline-block;" onsubmit="return confirm(\'Apakah Anda yakin ingin menghapus data ini?\')">
+                                ' . csrf_field() . '
+                                <input type="hidden" name="id" value="' . $row->id . '">
+                                <button type="submit" class="btn btn-danger me-1">Delete</button>
+                            </form>
+                        ';
+                    }
+
+
+
 
 
                     if (auth()->user()->hasRole('admin') && $row->status == 'pending' && $row->status_pinjaman == 'aktif') {
@@ -67,6 +85,9 @@ class PinjamanController extends Controller
                 ->rawColumns(['action']) // Tambahkan 'status_pinjaman' di sini agar HTML-nya tidak di-escape
                 ->make(true);
         }
+
+
+
         return view('admin.pinjam.index');
     }
 
@@ -84,9 +105,10 @@ public function reject($id)
 {
     $pinjaman = Pinjaman::findOrFail($id);
     $pinjaman->status = 'rejected';
+    $pinjaman->status_pinjaman = 'tidak_aktif';
     $pinjaman->save();
 
-    return redirect()->route('pinjaman.index')->with('error', 'Pinjaman ditolak.');
+    return redirect()->route('pinjaman.index')->with('success', 'Pinjaman ditolak.');
 }
 
 
@@ -199,6 +221,7 @@ public function reject($id)
                     'jatuh_tempo' => $jatuhTempo,
                     'jumlah_dibayar' => null,
                     'tanggal_bayar' => null,
+                    'metode_pembayaran' => null,
                     'denda' => 0,
                     'total_denda' => 0,
                     'status' => 'belum_lunas'
@@ -242,20 +265,23 @@ public function reject($id)
 
         // Hitung jumlah dibayar: cicilan + total denda jika angsuran terakhir
         $jumlahDibayar = $pinjaman->cicilan_pembayaran + $totalDenda;
-        return view('admin.pinjam.bayar', compact('pinjaman', 'angsuran', 'jumlahDibayar'));
+        $saldo= 1000000.00;
+        return view('admin.pinjam.bayar', compact('pinjaman', 'angsuran', 'jumlahDibayar','saldo'));
     }
 
     public function proses_bayar(Request $request, $id)
     {
-        // Validasi input bukti transfer wajib diisi
+        // Validasi metode pembayaran
         $request->validate([
-            'bukti_transfer' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'metode_pembayaran' => 'required|in:transfer,tabungan',
         ]);
+
+        $metode = $request->metode_pembayaran;
 
         // Cari pinjaman berdasarkan ID
         $pinjaman = Pinjaman::findOrFail($id);
 
-        // Ambil semua angsuran pinjaman untuk cek total dan denda
+        // Ambil semua angsuran pinjaman
         $semuaAngsuran = DB::table('angsuran_pinjaman')
             ->where('pinjaman_id', $id)
             ->orderBy('angsuran_ke', 'asc')
@@ -268,37 +294,81 @@ public function reject($id)
             return redirect()->route('pinjaman.index')->with('error', 'Semua angsuran sudah dibayar!');
         }
 
-        // Cek apakah ini adalah angsuran terakhir
+        // Cek apakah ini angsuran terakhir
         $angsuranTerakhir = $semuaAngsuran->last()->id === $angsuran->id;
 
-        // Hitung total denda hanya jika angsuran terakhir
+        // Hitung total denda jika angsuran terakhir
         $totalDenda = $angsuranTerakhir ? $semuaAngsuran->sum('denda') : 0;
 
-        // Hitung jumlah dibayar: cicilan + total denda jika angsuran terakhir
+        // Jumlah yang harus dibayar
         $jumlahDibayar = $pinjaman->cicilan_pembayaran + $totalDenda;
 
-        // Simpan file bukti transfer
-        $folderPath = storage_path('app/public/buktitf');
-        if (!file_exists($folderPath)) {
-            mkdir($folderPath, 0777, true);
+        // Default bukti transfer null
+        $bukti_tf = null;
+
+        // Jika transfer, wajib upload bukti
+        if ($metode === 'transfer') {
+            $request->validate([
+                'bukti_transfer' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            ]);
+
+            // Simpan file
+            $folderPath = storage_path('app/public/buktitf');
+            if (!file_exists($folderPath)) {
+                mkdir($folderPath, 0777, true);
+            }
+
+            $buktiTransfer = $request->file('bukti_transfer');
+            $timestamp = now()->format('Y_m_d_H_i_s');
+            $fileName = $timestamp . "_" . $pinjaman->id . "_" . $buktiTransfer->getClientOriginalName();
+            $buktiTransfer->move($folderPath, $fileName);
+
+            $bukti_tf = 'storage/buktitf/' . $fileName;
         }
+        if ($metode === 'tabungan') {
+            $user_id = Auth::id();
 
-        $buktiTransfer = $request->file('bukti_transfer');
-        $timestamp = now()->format('Y_m_d_H_i_s');
-        $fileName = $timestamp . "_" . $pinjaman->id . "_" . $buktiTransfer->getClientOriginalName();
-        $buktiTransfer->move($folderPath, $fileName);
+            // Cek apakah user adalah anggota
+            $user = DB::table('users')
+                ->join('role_user', 'users.id', '=', 'role_user.user_id')
+                ->join('roles', 'role_user.role_id', '=', 'roles.id')
+                ->where('users.id', $user_id)
+                ->where('roles.id', 3) // Role anggota
+                ->select('users.*')
+                ->first();
 
-        // Update angsuran yang ditemukan
+            if (!$user) {
+                return redirect()->back()->withErrors('Akun ini bukan anggota.');
+            }
+            $simpanans = DB::table('simpanans')->get();
+            Simpanan::create([
+                'user_id' => $user_id,
+                'nama' => $user->name,
+                'email' => $user->email,
+                'tgl_lahir' => $user->tgl_lahir,
+                'nip' => $user->nip,
+                'alamat' => $user->alamat,
+                'no_hp' => $user->no_hp,
+                'jumlah' => $jumlahDibayar,
+                'status' => "potong",
+                'bukti_tf' => null,
+                'no_rek' => null,
+            ]);
+            $bukti_tf = null;
+
+        }
+        // Update angsuran
         DB::table('angsuran_pinjaman')
             ->where('id', $angsuran->id)
             ->update([
                 'tanggal_bayar' => now(),
                 'jumlah_dibayar' => $jumlahDibayar,
-                'bukti_transfer' => 'storage/buktitf/' . $fileName,
-                'status' => 'lunas'
+                'bukti_transfer' => $bukti_tf,
+                'status' => 'lunas',
+                'metode_pembayaran' => $metode,
             ]);
 
-        // Jika angsuran terakhir, ubah status pinjaman menjadi tidak_aktif
+        // Jika angsuran terakhir, update status pinjaman
         if ($angsuranTerakhir) {
             DB::table('pinjamans')
                 ->where('id', $pinjaman->id)
@@ -359,9 +429,23 @@ public function show($id)
                                 ->selectRaw('SUM(CAST(total_denda AS DECIMAL)) as total_denda') // Menggunakan CAST untuk konversi tipe data
                                 ->value('total_denda'); // Mengambil hasil penjumlahan
 
-    // dd($pinjaman);
+    // dd($angsuranList);
 
     return view('admin.pinjam.show', compact('pinjaman', 'angsuranList', 'sisaAngsuran','totalDenda','totalJumlahDenda'));
 }
+public function destroy(Request $request)
+{
+    $id = $request->input('id');
 
+    $pinjaman = Pinjaman::where('id', $id)
+        ->first();
+
+    if (!$pinjaman) {
+        return redirect()->back()->with('error', 'Data pinjaman tidak ditemukan atau tidak memenuhi syarat untuk dihapus.');
+    }
+
+    $pinjaman->delete();
+
+    return redirect()->back()->with('success', 'Data pinjaman berhasil dihapus.');
+}
 }
