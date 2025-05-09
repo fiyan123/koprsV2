@@ -44,6 +44,66 @@ public function getSaldoPerUser()
         'data' => $data
     ]);
 }
+public function getlaporanPinjam(Request $request)
+{
+    $pinjam = DB::table('pinjamans')
+        ->whereNotIn('pinjamans.status', ['rejected', 'pending'])
+        ->where('pinjamans.status_pinjaman', '!=', 'tidak_aktif')
+        ->join('angsuran_pinjaman', 'pinjamans.id', '=', 'angsuran_pinjaman.pinjaman_id')
+        ->select(
+            'pinjamans.created_at',
+            DB::raw('MAX(pinjamans.user_id) as user_id'),
+            DB::raw('SUM(angsuran_pinjaman.denda) as jumlah_denda'),
+            DB::raw('MAX(pinjamans.jumlah) as jumlah_Pinjaman'),
+            DB::raw('MAX(pinjamans.total_pembayaran) as total_bayar_Pinjaman'),
+            DB::raw('MAX(pinjamans.tipe_durasi) as tipe_durasi'),
+            DB::raw('MAX(pinjamans.durasi) as durasi'),
+            DB::raw('MAX(pinjamans.bunga) as bunga'),
+            DB::raw('MAX(pinjamans.status) as status'),
+            DB::raw('MAX(pinjamans.status_pinjaman) as status_pinjaman')
+        )
+        ->groupBy('pinjamans.created_at')
+        ->get();
+
+    // Initialize total variables
+    $total_jumlah_pinjaman_all = 0;
+    $total_bayar_Pinjaman_all = 0;
+    $total_jumlah_denda_all = 0;
+    $total_jumlah_keuntungan = 0;
+    $user_ids = [];
+
+    // Calculate totals from the retrieved data
+    foreach ($pinjam as $value) {
+        // Sum up the totals
+        $total_jumlah_pinjaman_all += $value->jumlah_Pinjaman;
+        $total_bayar_Pinjaman_all += $value->total_bayar_Pinjaman;
+        $total_jumlah_denda_all += $value->jumlah_denda;
+
+        // Collect user_ids for counting unique users
+        $user_ids[] = $value->user_id;
+    }
+
+    // Calculate total keuntungan
+    $total_jumlah_keuntungan = ($total_bayar_Pinjaman_all - $total_jumlah_pinjaman_all) + $total_jumlah_denda_all;
+
+    // Count unique user ids
+    $total_user_pinjaman_all = count(array_unique($user_ids));
+
+    // Return the response with totals included
+    return response()->json([
+        'success' => true,
+        'message' => 'Data laporan pinjaman berhasil diambil.',
+        'data' => $pinjam,
+        'total_user_pinjaman_all' => $total_user_pinjaman_all,
+        'total_jumlah_pinjaman_all' => number_format($total_jumlah_pinjaman_all, 2),
+        'total_bayar_Pinjaman_all' => number_format($total_bayar_Pinjaman_all, 2),
+        'total_jumlah_denda_all' => number_format($total_jumlah_denda_all, 2),
+        'total_jumlah_keuntungan' => number_format($total_jumlah_keuntungan, 2)
+    ]);
+}
+
+
+
 
   public function getlaporan(Request $request)
 {
