@@ -135,8 +135,17 @@
                     bulan: bulan
                 },
                 success: function(response) {
-                    const jumlahPinjaman = new Intl.NumberFormat('id-ID').format(response.total_jumlah_pinjaman_all);
-                    $('.jumlah-pinjaman').text('Rp. ' + jumlahPinjaman);
+                    // Ubah dari string "100,000.00" ke number (hapus koma dulu)
+                    const rawJumlahPinjaman = parseFloat(response.total_jumlah_pinjaman_all.replace(/,/g, ''));
+
+                    const jumlahPinjaman = new Intl.NumberFormat('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }).format(rawJumlahPinjaman);
+
+                    $('.jumlah-pinjaman').text(jumlahPinjaman);
                     $('.jumlah-peminjam').text(response.total_user_pinjaman_all);
                 },
                 error: function(xhr) {
@@ -144,7 +153,6 @@
                 }
             });
         }
-
 
         function filterData() {
             const tahun = $('#tahun').val();

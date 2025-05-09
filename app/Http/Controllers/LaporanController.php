@@ -37,12 +37,10 @@ class LaporanController extends Controller
         $bulan = $request->query('bulan') ?? now()->month;
 
         $laporan = $laporanPinjamanService->generatelaporanPinjaman($tahun, $bulan);
-        $pdf = PDF::loadView('pdf.export_pinjaman', [
-            'laporan' => $laporan,
-            'tahun' => $tahun,
-            'bulan' => $bulan,
+        return response()->json([
+            'total_user_pinjaman_all' => $laporan['total_user_pinjaman_all'],
+            'total_jumlah_pinjaman_all' => $laporan['total_jumlah_pinjaman_all'],
         ]);
-        return $pdf->download('Laporan-Pinjaman.pdf');
     }
 
     public function laporan_simpanan(Request $request, LaporanService $laporanService)

@@ -63,8 +63,8 @@
                     <td>{{ $no++ }}</td>
                     <td>{{ \Carbon\Carbon::parse($row->created_at)->format('d-m-Y') }}</td>
                     <td>{{ $row->user_id }}</td>
-                    <td>{{ number_format($row->jumlah_Pinjaman, 2) }}</td>
-                    <td>{{ number_format($row->total_bayar_Pinjaman, 2) }}</td>
+                    <td>{{ number_format($row->jumlah_pinjaman, 2) }}</td>
+                    <td>{{ number_format($row->total_bayar_pinjaman, 2) }}</td>
                     <td>{{ number_format($row->jumlah_denda, 2) }}</td>
                     <td>{{ $row->bunga }}%</td>
                     <td>{{ ucfirst($row->status_pinjaman) }}</td>
