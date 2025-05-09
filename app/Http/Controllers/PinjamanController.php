@@ -14,21 +14,24 @@ class PinjamanController extends Controller
 {
     public function index(Request $request)
     {
+        $id = Auth::id();
         if ($request->ajax()) {
             // Ambil data pinjaman, sesuaikan query berdasarkan role
+
             if (auth()->user()->hasRole('anggota')) {
                 $data = Pinjaman::select('id', 'nama', 'tgl_lahir', 'nip', 'jumlah', 'status', 'status_pinjaman')
-                    ->where('user_id', auth()->user()->id)
+                    ->where('user_id',$id )
                     ->get();
-            } else {
-                $data = Pinjaman::select('id', 'nama', 'tgl_lahir', 'nip', 'jumlah', 'status', 'status_pinjaman')
-                ->where(function ($query) {
-                    $query->where('status', '!=', 'rejected')
-                          ->orWhere('status_pinjaman', '!=', 'tidak_aktif');
-                })
-                ->get();
+                    // dd($data,"1");
+                } else {
+                    $data = Pinjaman::select('id', 'nama', 'tgl_lahir', 'nip', 'jumlah', 'status', 'status_pinjaman')
+                    ->where(function ($query) {
+                        $query->where('status', '!=', 'rejected')
+                        ->orWhere('status_pinjaman', '!=', 'tidak_aktif');
+                    })
+                    ->get();
+                    // dd($data,"2");
             }
-
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -243,6 +246,9 @@ public function reject($id)
     {
         // Ambil data pinjaman
         $pinjaman = Pinjaman::findOrFail($pinjaman_id);
+        // dd($pinjaman);
+        $user_id = $pinjaman->user_id;
+        // dd($user_id);
 
         // Ambil semua angsuran pinjaman (diurutkan)
         $semuaAngsuran = DB::table('angsuran_pinjaman')
@@ -265,7 +271,34 @@ public function reject($id)
 
         // Hitung jumlah dibayar: cicilan + total denda jika angsuran terakhir
         $jumlahDibayar = $pinjaman->cicilan_pembayaran + $totalDenda;
-        $saldo= 1000000.00;
+
+         $data = DB::table('users')
+        ->join('role_user', 'users.id', '=', 'role_user.user_id')
+        ->join('roles', 'role_user.role_id', '=', 'roles.id')
+        ->leftJoin('simpanans as simpan', function ($join) {
+            $join->on('users.id', '=', 'simpan.user_id')
+                ->where('simpan.status', '=', 'simpan');
+        })
+        ->leftJoin('simpanans as tarik', function ($join) {
+            $join->on('users.id', '=', 'tarik.user_id')
+                ->where('tarik.status', '=', 'tarik');
+        })
+        ->leftJoin('simpanans as potong', function ($join) {
+            $join->on('users.id', '=', 'potong.user_id')
+                ->where('potong.status', '=', 'potong');
+        })
+        ->where('users.id', $user_id)
+        ->where('roles.id', 3) // Filter hanya role_id = 3 (misalnya: santri)
+        ->select(
+            'users.*',
+            DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) as total_simpan'),
+            DB::raw('COALESCE(SUM(DISTINCT tarik.jumlah), 0) as total_tarik'),
+            DB::raw('COALESCE(SUM(DISTINCT potong.jumlah), 0) as total_potong'),
+            DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) - (COALESCE(SUM(DISTINCT tarik.jumlah), 0) + COALESCE(SUM(DISTINCT potong.jumlah), 0)) as saldo_akhir')
+        )
+        ->groupBy('users.id')
+        ->first();
+        $saldo= $data->saldo_akhir;
         return view('admin.pinjam.bayar', compact('pinjaman', 'angsuran', 'jumlahDibayar','saldo'));
     }
 
@@ -327,6 +360,48 @@ public function reject($id)
         }
         if ($metode === 'tabungan') {
             $user_id = Auth::id();
+
+         $data = DB::table('users')
+        ->join('role_user', 'users.id', '=', 'role_user.user_id')
+        ->join('roles', 'role_user.role_id', '=', 'roles.id')
+        ->leftJoin('simpanans as simpan', function ($join) {
+            $join->on('users.id', '=', 'simpan.user_id')
+                ->where('simpan.status', '=', 'simpan');
+        })
+        ->leftJoin('simpanans as tarik', function ($join) {
+            $join->on('users.id', '=', 'tarik.user_id')
+                ->where('tarik.status', '=', 'tarik');
+        })
+        ->leftJoin('simpanans as potong', function ($join) {
+            $join->on('users.id', '=', 'potong.user_id')
+                ->where('potong.status', '=', 'potong');
+        })
+        ->where('users.id', $user_id)
+        ->where('roles.id', 3) // Filter hanya role_id = 3 (misalnya: santri)
+        ->select(
+            'users.*',
+            DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) as total_simpan'),
+            DB::raw('COALESCE(SUM(DISTINCT tarik.jumlah), 0) as total_tarik'),
+            DB::raw('COALESCE(SUM(DISTINCT potong.jumlah), 0) as total_potong'),
+            DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) - (COALESCE(SUM(DISTINCT tarik.jumlah), 0) + COALESCE(SUM(DISTINCT potong.jumlah), 0)) as saldo_akhir')
+        )
+        ->groupBy('users.id')
+        ->first();
+        $saldo = $data->saldo_akhir;
+
+        // if($jumlahDibayar >= $saldo){
+        //     dd("1");
+        // }else{
+        //     dd("2");
+        // }
+        // dd($saldo,$jumlahDibayar);
+
+            if ($jumlahDibayar >= $saldo) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Jumlah yang dibayar tidak boleh lebih besar atau sama dengan saldo.'
+                ], 400); // 400 = Bad Request
+            }
 
             // Cek apakah user adalah anggota
             $user = DB::table('users')

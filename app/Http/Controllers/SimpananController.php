@@ -15,8 +15,11 @@ class SimpananController extends Controller
    // Show all data for Simpanan
 public function index(Request $request)
 {
+    $user_id = Auth::id();
+    // dd($user_id);
     if ($request->ajax()) {
-        $data = Simpanan::all();
+        $data = Simpanan::where('user_id', $user_id )->get();
+
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
@@ -25,7 +28,7 @@ public function index(Request $request)
                 ';
 
                 // Cek jika pengguna yang login memiliki role 'anggota', maka tampilkan tombol Edit
-                if (auth()->user()->hasRole('anggota')) {
+                if (auth()->user()->hasRole('anggota') && $row->status != 'potong') {
                     $btn .= '
                         <a href="' . route('simpanan.edit', $row->id) . '" class="btn btn-sm btn-primary">Edit</a>
                     ';
@@ -45,18 +48,33 @@ public function index(Request $request)
     public function create()
     {
         $user_id = Auth::id();
-        $simpan = DB::table('simpanans')
-            ->where('status', 'simpan')
-            ->where('user_id', $user_id)
-            ->sum('jumlah');
-
-        $tarik = DB::table('simpanans')
-            ->where('status', 'tarik')
-            ->where('user_id', $user_id)
-            ->sum('jumlah');
-
-        $sisa_saldo = $simpan - $tarik;
-
+               $data = DB::table('users')
+                ->join('role_user', 'users.id', '=', 'role_user.user_id')
+                ->join('roles', 'role_user.role_id', '=', 'roles.id')
+                ->leftJoin('simpanans as simpan', function ($join) {
+                    $join->on('users.id', '=', 'simpan.user_id')
+                        ->where('simpan.status', '=', 'simpan');
+                })
+                ->leftJoin('simpanans as tarik', function ($join) {
+                    $join->on('users.id', '=', 'tarik.user_id')
+                        ->where('tarik.status', '=', 'tarik');
+                })
+                ->leftJoin('simpanans as potong', function ($join) {
+                    $join->on('users.id', '=', 'potong.user_id')
+                        ->where('potong.status', '=', 'potong');
+                })
+                ->where('users.id', $user_id)
+                ->where('roles.id', 3) // Filter hanya role_id = 3 (misalnya: santri)
+                ->select(
+                    'users.*',
+                    DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) as total_simpan'),
+                    DB::raw('COALESCE(SUM(DISTINCT tarik.jumlah), 0) as total_tarik'),
+                    DB::raw('COALESCE(SUM(DISTINCT potong.jumlah), 0) as total_potong'),
+                    DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) - (COALESCE(SUM(DISTINCT tarik.jumlah), 0) + COALESCE(SUM(DISTINCT potong.jumlah), 0)) as saldo_akhir')
+                )
+                ->groupBy('users.id')
+                ->first();
+        $sisa_saldo = $data->saldo_akhir;
         return view('admin.simpanan.create', compact('sisa_saldo'));
     }
 
@@ -112,19 +130,34 @@ public function index(Request $request)
                 if (!$no_rek) {
                     return redirect()->back()->withErrors('Nomor Rekening wajib diisi jika status tarik.');
                 }
-
-                $simpan = DB::table('simpanans')
-                    ->where('status', 'simpan')
-                    ->where('user_id', $user_id)
-                    ->sum('jumlah');
-
-                $tarik = DB::table('simpanans')
-                    ->where('status', 'tarik')
-                    ->where('user_id', $user_id)
-                    ->sum('jumlah');
-
-                $sisa_saldo = $simpan - $tarik;
-                if ($validated['jumlah'] > $sisa_saldo) {
+   $data = DB::table('users')
+        ->join('role_user', 'users.id', '=', 'role_user.user_id')
+        ->join('roles', 'role_user.role_id', '=', 'roles.id')
+        ->leftJoin('simpanans as simpan', function ($join) {
+            $join->on('users.id', '=', 'simpan.user_id')
+                ->where('simpan.status', '=', 'simpan');
+        })
+        ->leftJoin('simpanans as tarik', function ($join) {
+            $join->on('users.id', '=', 'tarik.user_id')
+                ->where('tarik.status', '=', 'tarik');
+        })
+        ->leftJoin('simpanans as potong', function ($join) {
+            $join->on('users.id', '=', 'potong.user_id')
+                ->where('potong.status', '=', 'potong');
+        })
+        ->where('users.id', $user_id)
+        ->where('roles.id', 3) // Filter hanya role_id = 3 (misalnya: santri)
+        ->select(
+            'users.*',
+            DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) as total_simpan'),
+            DB::raw('COALESCE(SUM(DISTINCT tarik.jumlah), 0) as total_tarik'),
+            DB::raw('COALESCE(SUM(DISTINCT potong.jumlah), 0) as total_potong'),
+            DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) - (COALESCE(SUM(DISTINCT tarik.jumlah), 0) + COALESCE(SUM(DISTINCT potong.jumlah), 0)) as saldo_akhir')
+        )
+        ->groupBy('users.id')
+        ->first();
+                $sisa_saldo = $data->saldo_akhir;
+                if ($validated['jumlah'] >= $sisa_saldo) {
                     return redirect()->back()->withErrors("Jumlah tarik melebihi saldo maksimal Rp {$sisa_saldo}");
                 }
             }
@@ -165,19 +198,72 @@ public function show($id)
     $simpanan = Simpanan::findOrFail($id);  // Mengambil Simpanan dengan ID yang sesuai
     $simpananList = Simpanan::where('user_id', $simpanan->user_id)->get(); // Ambil semua simpanan milik user yang sama
 
+                $data = DB::table('users')
+                ->join('role_user', 'users.id', '=', 'role_user.user_id')
+                ->join('roles', 'role_user.role_id', '=', 'roles.id')
+                ->leftJoin('simpanans as simpan', function ($join) {
+                    $join->on('users.id', '=', 'simpan.user_id')
+                        ->where('simpan.status', '=', 'simpan');
+                })
+                ->leftJoin('simpanans as tarik', function ($join) {
+                    $join->on('users.id', '=', 'tarik.user_id')
+                        ->where('tarik.status', '=', 'tarik');
+                })
+                ->leftJoin('simpanans as potong', function ($join) {
+                    $join->on('users.id', '=', 'potong.user_id')
+                        ->where('potong.status', '=', 'potong');
+                })
+                ->where('users.id', $simpanan->user_id)
+                ->where('roles.id', 3) // Filter hanya role_id = 3 (misalnya: santri)
+                ->select(
+                    'users.*',
+                    DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) as total_simpan'),
+                    DB::raw('COALESCE(SUM(DISTINCT tarik.jumlah), 0) as total_tarik'),
+                    DB::raw('COALESCE(SUM(DISTINCT potong.jumlah), 0) as total_potong'),
+                    DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) - (COALESCE(SUM(DISTINCT tarik.jumlah), 0) + COALESCE(SUM(DISTINCT potong.jumlah), 0)) as saldo_akhir')
+                )
+                ->groupBy('users.id')
+                ->first();
+                $sisa_saldo = $data->saldo_akhir;
     // Mengirim data Simpanan ke view edit
-    return view('admin.simpanan.show',compact('simpanan','simpananList'));
+    return view('admin.simpanan.show',compact('simpanan','simpananList','sisa_saldo'));
 }
 // Show the form for editing the specified Simpanan
 public function edit($id)
 {
     // Cari Simpanan berdasarkan ID
     $simpanan = Simpanan::findOrFail($id);  // Mengambil Simpanan dengan ID yang sesuai
-
+    $user_id = $simpanan->user_id;
     // Menghapus desimal pada jumlah jika ada
-    $simpanan->jumlah = intval($simpanan->jumlah);  // Mengubah jumlah menjadi integer
-
-    return view('admin.simpanan.edit', compact('simpanan'));
+    // $simpanan->jumlah = intval($simpanan->jumlah);  // Mengubah jumlah menjadi integer
+ $data = DB::table('users')
+        ->join('role_user', 'users.id', '=', 'role_user.user_id')
+        ->join('roles', 'role_user.role_id', '=', 'roles.id')
+        ->leftJoin('simpanans as simpan', function ($join) {
+            $join->on('users.id', '=', 'simpan.user_id')
+                ->where('simpan.status', '=', 'simpan');
+        })
+        ->leftJoin('simpanans as tarik', function ($join) {
+            $join->on('users.id', '=', 'tarik.user_id')
+                ->where('tarik.status', '=', 'tarik');
+        })
+        ->leftJoin('simpanans as potong', function ($join) {
+            $join->on('users.id', '=', 'potong.user_id')
+                ->where('potong.status', '=', 'potong');
+        })
+        ->where('users.id', $user_id)
+        ->where('roles.id', 3) // Filter hanya role_id = 3 (misalnya: santri)
+        ->select(
+            'users.*',
+            DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) as total_simpan'),
+            DB::raw('COALESCE(SUM(DISTINCT tarik.jumlah), 0) as total_tarik'),
+            DB::raw('COALESCE(SUM(DISTINCT potong.jumlah), 0) as total_potong'),
+            DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) - (COALESCE(SUM(DISTINCT tarik.jumlah), 0) + COALESCE(SUM(DISTINCT potong.jumlah), 0)) as saldo_akhir')
+        )
+        ->groupBy('users.id')
+        ->first();
+        $sisa_saldo = $data->saldo_akhir;
+    return view('admin.simpanan.edit', compact('simpanan','sisa_saldo'));
 }
 public function update(Request $request, $id)
 {
@@ -241,18 +327,34 @@ public function update(Request $request, $id)
                 return redirect()->back()->withErrors('Nomor Rekening wajib diisi jika status tarik.');
             }
 
-            $simpan = DB::table('simpanans')
-                ->where('status', 'simpan')
-                ->where('user_id', $user_id)
-                ->sum('jumlah');
-
-            $tarik = DB::table('simpanans')
-                ->where('status', 'tarik')
-                ->where('user_id', $user_id)
-                ->sum('jumlah');
-
-            $sisa_saldo = $simpan - $tarik;
-            if ($validated['jumlah'] > $sisa_saldo) {
+                $data = DB::table('users')
+                ->join('role_user', 'users.id', '=', 'role_user.user_id')
+                ->join('roles', 'role_user.role_id', '=', 'roles.id')
+                ->leftJoin('simpanans as simpan', function ($join) {
+                    $join->on('users.id', '=', 'simpan.user_id')
+                        ->where('simpan.status', '=', 'simpan');
+                })
+                ->leftJoin('simpanans as tarik', function ($join) {
+                    $join->on('users.id', '=', 'tarik.user_id')
+                        ->where('tarik.status', '=', 'tarik');
+                })
+                ->leftJoin('simpanans as potong', function ($join) {
+                    $join->on('users.id', '=', 'potong.user_id')
+                        ->where('potong.status', '=', 'potong');
+                })
+                ->where('users.id', $user_id)
+                ->where('roles.id', 3) // Filter hanya role_id = 3 (misalnya: santri)
+                ->select(
+                    'users.*',
+                    DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) as total_simpan'),
+                    DB::raw('COALESCE(SUM(DISTINCT tarik.jumlah), 0) as total_tarik'),
+                    DB::raw('COALESCE(SUM(DISTINCT potong.jumlah), 0) as total_potong'),
+                    DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) - (COALESCE(SUM(DISTINCT tarik.jumlah), 0) + COALESCE(SUM(DISTINCT potong.jumlah), 0)) as saldo_akhir')
+                )
+                ->groupBy('users.id')
+                ->first();
+                $sisa_saldo = $data->saldo_akhir;
+            if ($validated['jumlah'] >= $sisa_saldo) {
                 return redirect()->back()->withErrors("Jumlah tarik melebihi saldo maksimal Rp {$sisa_saldo}");
             }
         }

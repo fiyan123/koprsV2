@@ -23,7 +23,6 @@
                                     <th>NIP</th>
                                     <th>Jumlah</th>
                                     <th>Status</th>
-                                    {{-- <th>Jenis Simpanan</th> --}}
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -52,7 +51,6 @@
                     { data: 'nip', name: 'nip' },
                     { data: 'jumlah', name: 'jumlah' },
                     { data: 'status', name: 'status' },
-                    // { data: 'jenis_simpanan', name: 'jenis_simpanan' },
                     { data: 'action', name: 'action', orderable: false, searchable: false, className: "text-center" }
                 ],
                 columnDefs: [{

@@ -7,11 +7,11 @@
 @endsection
 
 @section('content')
-@php
+{{-- @php
   $simpan = DB::table('simpanans')->where('status','simpan')->where('user_id', auth()->id())->sum('jumlah');
   $tarik = DB::table('simpanans')->where('status','tarik')->where('user_id', auth()->id())->sum('jumlah');
   $sisa_saldo = $simpan - $tarik;
-@endphp
+@endphp --}}
 
 <div class="row">
   <div class="col-12 grid-margin stretch-card">

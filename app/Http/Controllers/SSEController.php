@@ -54,8 +54,8 @@ public function getlaporanPinjam(Request $request)
             'pinjamans.created_at',
             DB::raw('MAX(pinjamans.user_id) as user_id'),
             DB::raw('SUM(angsuran_pinjaman.denda) as jumlah_denda'),
-            DB::raw('MAX(pinjamans.jumlah) as jumlah_Pinjaman'),
-            DB::raw('MAX(pinjamans.total_pembayaran) as total_bayar_Pinjaman'),
+            DB::raw('MAX(pinjamans.jumlah) as jumlah_pinjaman'),
+            DB::raw('MAX(pinjamans.total_pembayaran) as total_bayar_pinjaman'),
             DB::raw('MAX(pinjamans.tipe_durasi) as tipe_durasi'),
             DB::raw('MAX(pinjamans.durasi) as durasi'),
             DB::raw('MAX(pinjamans.bunga) as bunga'),
@@ -64,7 +64,7 @@ public function getlaporanPinjam(Request $request)
         )
         ->groupBy('pinjamans.created_at')
         ->get();
-
+// dd($pinjam);
     // Initialize total variables
     $total_jumlah_pinjaman_all = 0;
     $total_bayar_Pinjaman_all = 0;
@@ -75,8 +75,8 @@ public function getlaporanPinjam(Request $request)
     // Calculate totals from the retrieved data
     foreach ($pinjam as $value) {
         // Sum up the totals
-        $total_jumlah_pinjaman_all += $value->jumlah_Pinjaman;
-        $total_bayar_Pinjaman_all += $value->total_bayar_Pinjaman;
+        $total_jumlah_pinjaman_all += $value->jumlah_pinjaman;
+        $total_bayar_Pinjaman_all += $value->total_bayar_pinjaman;
         $total_jumlah_denda_all += $value->jumlah_denda;
 
         // Collect user_ids for counting unique users

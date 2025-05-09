@@ -57,7 +57,8 @@
                     <div class="col-md-6 mb-2"><strong>Alamat:</strong> {{ $simpanan->alamat }}</div>
                     @if ($simpanan->status === 'tarik')
                         <div class="col-md-6 mb-2"><strong>No Rek:</strong> {{ $simpanan->no_rek }}</div>
-                    @endif
+                        @endif
+                        <div class="col-md-6 mb-2"><strong>Sisa Saldo:</strong> {{ $sisa_saldo }}</div>
                 </div>
 
                 <hr class="my-4">
