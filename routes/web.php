@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardMenuController;
 use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -120,5 +121,11 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
         Route::get('/', [LaporanController::class, 'index'])->name('laporan');
         Route::get('/simpanan', [LaporanController::class, 'laporan_simpanan'])->name('laporan.simpanan');
         Route::get('/pinjaman', [LaporanController::class, 'laporan_pinjaman'])->name('laporan.pinjaman');
+    });
+
+    Route::group(['prefix' => 'profile'], function() {
+        Route::get('/{id}', [ProfileController::class, 'index'])->name('profile');
+        Route::patch('update/{id}', [ProfileController::class, 'update'])->name('profile.update');
+        Route::post('destroy', [ProfileController::class, 'destroy'])->name('saldo.destroy');
     });
 });
