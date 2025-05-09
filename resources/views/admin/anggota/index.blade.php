@@ -18,8 +18,8 @@
                                     <th scope="col">No</th>
                                     <th scope="col" class="min-w-100px">Nama</th>
                                     <th scope="col" class="min-w-100px">Email</th>
-                                    <th scope="col" class="min-w-100px">NIP</th>
                                     <th scope="col" class="min-w-100px">Tanggal Lahir</th>
+                                    <th scope="col" class="min-w-100px">NIP</th>
                                     <th scope="col" class="min-w-100px">Alamat</th>
                                     <th scope="col" class="min-w-100px">Saldo</th>
                                     <th scope="col" class="min-w-100px">Actions</th>
@@ -38,47 +38,6 @@
     <script>
         $(document).ready(function() {
             loadData();
-
-            $(document).on('click', '.delete', function() {
-                let id = $(this).attr('id');
-                Swal.fire({
-                    title: 'Apakah anda yakin?',
-                    text: "Data akan dihapus permanen!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya, hapus!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ url('anggota') }}/" + id,
-                            type: 'POST',
-                            data: {
-                                _method: 'DELETE',
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function(res, status) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Berhasil dihapus',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                }).then(() => {
-                                    $('#dataTable').DataTable().ajax.reload();
-                                });
-                            },
-                            error: function(xhr) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
-                                    text: xhr.responseJSON?.message || 'Terjadi kesalahan.',
-                                });
-                            }
-                        });
-                    }
-                });
-            });
         });
 
         function loadData() {

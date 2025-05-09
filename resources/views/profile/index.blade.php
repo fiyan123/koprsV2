@@ -72,9 +72,9 @@
                             @endif
                         </div>
                     </div>
-                    <div class="text-end mt-4">
+                    {{-- <div class="text-end mt-4">
                         <a href="{{ route('anggota.index') }}" class="btn btn-secondary">Kembali</a>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
@@ -158,7 +158,7 @@
 
                 <div class="text-end mt-4">
                     <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                    <a href="{{ route('anggota.index') }}" class="btn btn-secondary">Batal</a>
+                    <a href="{{ route('home') }}" class="btn btn-secondary">Batal</a>
                 </div>
             </form>
         </div>

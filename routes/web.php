@@ -66,12 +66,6 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
 
     Route::group(['prefix' => 'home'], function() {
         Route::get('/', [DashboardMenuController::class, 'index'])->name('home');
-        Route::get('create', [DashboardMenuController::class, 'create'])->name('home.create');
-        Route::post('store', [DashboardMenuController::class, 'store'])->name('home.store');
-        Route::get('edit/{id}', [DashboardMenuController::class, 'edit'])->name('home.edit');
-        Route::get('show/{id}', [DashboardMenuController::class, 'show'])->name('home.show');
-        Route::patch('update/{id}', [DashboardMenuController::class, 'update'])->name('home.update');
-        Route::post('destroy', [DashboardMenuController::class, 'destroy'])->name('home.destroy');
     });
 
     Route::group(['prefix' => 'anggota'], function() {
@@ -81,7 +75,6 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
         Route::get('edit/{id}', [AnggotaController::class, 'edit'])->name('anggota.edit');
         Route::get('show/{id}', [AnggotaController::class, 'show'])->name('anggota.show');
         Route::patch('update/{id}', [AnggotaController::class, 'update'])->name('anggota.update');
-        Route::post('destroy', [AnggotaController::class, 'destroy'])->name('anggota.destroy');
     });
 
 
