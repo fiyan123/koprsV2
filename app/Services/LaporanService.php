@@ -73,7 +73,7 @@ class LaporanService
             // Saldo akhir per user
             $saldo[$itemSimpan->user_id] = [
                 'user' => $itemSimpan->name,
-                'saldo_akhir' => $sumTarik + $sumPotong - $itemSimpan->sum_jumlah,
+                'saldo_akhir' => $itemSimpan->sum_jumlah - ($sumTarik + $sumPotong),
                 'status' => 'simpan'
             ];
         }

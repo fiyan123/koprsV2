@@ -52,7 +52,7 @@ class LaporanController extends Controller
         $laporan = $laporanService->generateLaporanSimpanan($tahun, $bulan);
 
         return response()->json([
-            'jumlah_simpanan' => $laporan['total_all']['count_jumlah_simpan'],
+            'jumlah_simpanan' => $laporan['total_all']['count_jumlah_all'],
             'jumlah_anggota' => $laporan['total_all']['count_user_simpan']
         ]);
     }

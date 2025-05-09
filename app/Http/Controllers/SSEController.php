@@ -531,11 +531,158 @@ public function denda_pinjaman()
 
     public function getTotalNasabah()
     {
-        return DB::table('users')
+        $data =  DB::table('users')
             ->join('role_user', 'users.id', '=', 'role_user.user_id')
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->where('roles.id', 3)
             ->count();
+        return response()->json([
+                'success' => true,
+                'message' => 'Data total simpanan, tarik, dan potong per user berhasil diambil',
+                'data' => $data,
+        ]);
+    }
+    public function getTotalSimpanan()
+    {
+       // Ambil data total simpan per user
+    $simpan = DB::table('simpanans')
+    ->join('users','simpanans.user_id','users.id')
+        ->select('user_id', DB::raw('SUM(jumlah) as sum_jumlah'), 'status','users.name')
+        ->where('status', 'simpan')
+        ->groupBy('user_id', 'status','users.name')
+        ->orderBy('user_id')
+        ->get();
+
+    // Ambil data total tarik per user
+    $tarik = DB::table('simpanans')
+        ->join('users','simpanans.user_id','users.id')
+
+        ->select('user_id', DB::raw('SUM(jumlah) as sum_jumlah'), 'status','users.name')
+        ->where('status', 'tarik')
+        ->groupBy('user_id', 'status','users.name')
+        ->orderBy('user_id')
+        ->get();
+
+    // Ambil data total potong per user
+    $potong = DB::table('simpanans')
+        ->join('users','simpanans.user_id','users.id')
+
+        ->select('user_id', DB::raw('SUM(jumlah) as sum_jumlah'), 'status','users.name')
+        ->where('status', 'potong')
+        ->groupBy('user_id', 'status','users.name')
+        ->orderBy('user_id')
+        ->get();
+
+    // Menghitung saldo akhir per user (tarik + potong - simpan)
+    $saldo = [];
+    $total_simpan_jumlah = $simpan->sum('sum_jumlah');
+    $total_tarik_jumlah = $tarik->sum('sum_jumlah');
+    $total_potong_jumlah = $potong->sum('sum_jumlah');
+
+    foreach ($simpan as $itemSimpan) {
+        // Temukan data tarik dan potong berdasarkan user_id
+        $tarikUser = $tarik->firstWhere('user_id', $itemSimpan->user_id);
+        $potongUser = $potong->firstWhere('user_id', $itemSimpan->user_id);
+
+        // Hitung saldo (tarik + potong - simpan)
+        $sumTarik = $tarikUser ? $tarikUser->sum_jumlah : 0;
+        $sumPotong = $potongUser ? $potongUser->sum_jumlah : 0;
+
+        // Saldo akhir per user
+        $saldo[$itemSimpan->user_id] = [
+            'user_id' => $itemSimpan->user_id,
+            'user_name' => $itemSimpan->name,
+            'saldo_akhir' => $itemSimpan->sum_jumlah - ($sumTarik + $sumPotong ),
+            'status' => 'simpan'
+        ];
+    }
+
+    // Menghitung total keseluruhan untuk status simpan, tarik, dan potong
+    $total_simpan = [
+        'count_user' => $simpan->count(),
+        'count_jumlah' => $total_simpan_jumlah,
+        'status' => 'simpan'
+    ];
+
+    $total_tarik = [
+        'count_user' => $tarik->count(),
+        'count_jumlah' => $total_tarik_jumlah,
+        'status' => 'tarik'
+    ];
+
+    $total_potong = [
+        'count_user' => $potong->count(),
+        'count_jumlah' => $total_potong_jumlah,
+        'status' => 'potong'
+    ];
+
+    // Menghitung total user keseluruhan (count_user_all)
+    $all_user_ids = $simpan->pluck('user_id')->merge($tarik->pluck('user_id'))->merge($potong->pluck('user_id'))->unique();
+    $count_user_all = $all_user_ids->count();
+
+    // Menghitung count_jumlah_all (simpan - (tarik + potong))
+    $count_jumlah_all = $total_simpan_jumlah - ($total_tarik_jumlah + $total_potong_jumlah);
+
+    // Mengembalikan response dengan data dan total_all
+    return response()->json([
+        'success' => true,
+        'message' => 'Data total simpanan, tarik, dan potong per user berhasil diambil',
+        'data' => $count_jumlah_all,
+    ]);
+    }
+    public function getTotalPinjaman()
+    {
+        $pinjam = DB::table('pinjamans')
+        ->whereNotIn('pinjamans.status', ['rejected', 'pending'])
+        ->where('pinjamans.status_pinjaman', '!=', 'tidak_aktif')
+        ->join('angsuran_pinjaman', 'pinjamans.id', '=', 'angsuran_pinjaman.pinjaman_id')
+        ->join('users', 'pinjamans.user_id', '=', 'users.id')
+        ->select(
+            'pinjamans.created_at',
+            DB::raw('MAX(pinjamans.user_id) as user_id'),
+            DB::raw('MAX(users.name) as user_name'),
+            DB::raw('SUM(angsuran_pinjaman.denda) as jumlah_denda'),
+            DB::raw('MAX(pinjamans.jumlah) as jumlah_pinjaman'),
+            DB::raw('MAX(pinjamans.total_pembayaran) as total_bayar_pinjaman'),
+            DB::raw('MAX(pinjamans.tipe_durasi) as tipe_durasi'),
+            DB::raw('MAX(pinjamans.durasi) as durasi'),
+            DB::raw('MAX(pinjamans.bunga) as bunga'),
+            DB::raw('MAX(pinjamans.status) as status'),
+            DB::raw('MAX(pinjamans.status_pinjaman) as status_pinjaman')
+        )
+        ->groupBy('pinjamans.created_at')
+        ->get();
+// dd($pinjam);
+    // Initialize total variables
+    $total_jumlah_pinjaman_all = 0;
+    $total_bayar_Pinjaman_all = 0;
+    $total_jumlah_denda_all = 0;
+    $total_jumlah_keuntungan = 0;
+    $user_ids = [];
+
+    // Calculate totals from the retrieved data
+    foreach ($pinjam as $value) {
+        // Sum up the totals
+        $total_jumlah_pinjaman_all += $value->jumlah_pinjaman;
+        $total_bayar_Pinjaman_all += $value->total_bayar_pinjaman;
+        $total_jumlah_denda_all += $value->jumlah_denda;
+
+        // Collect user_ids for counting unique users
+        $user_ids[] = $value->user_id;
+    }
+
+    // Calculate total keuntungan
+    $total_jumlah_keuntungan = ($total_bayar_Pinjaman_all - $total_jumlah_pinjaman_all) + $total_jumlah_denda_all;
+
+    // Count unique user ids
+    $total_user_pinjaman_all = count(array_unique($user_ids));
+
+    // Return the response with totals included
+        return response()->json([
+            'success' => true,
+            'message' => 'Data laporan pinjaman berhasil diambil.',
+            'data' => number_format($total_jumlah_pinjaman_all, 2),
+        ]);
     }
 
     // public function getTotalPinjaman()
@@ -545,18 +692,12 @@ public function denda_pinjaman()
     //         ->where('status_pinjaman', 'aktif')
     //         ->sum('jumlah');
     // }
-    public function getTotalSimpanan()
-    {
-        return DB::table('simpanans')
-            ->count();
-    }
-    public function getTotalPinjaman()
-    {
-        return DB::table('pinjamans')
-            ->where('status', 'approved')
-            ->where('status_pinjaman', 'aktif')
-            ->count();
-    }
+    // public function getTotalSimpanan()
+    // {
+    //     return DB::table('simpanans')
+    //         ->count();
+    // }
+
 
     public function TotalAllChart()
     {

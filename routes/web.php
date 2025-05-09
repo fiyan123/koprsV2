@@ -50,7 +50,7 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
 
     Route::group(['prefix' => 'sse'], function() {
         Route::get('TotalAllChart', [SSEController::class, 'TotalAllChart'])->name('TotalAllChart');
-        Route::get('getTotalPinjaman', [SSEController::class, 'getTotalPinjaman'])->name('getTotalPinjaman');
+        // Route::get('getTotalPinjaman', [SSEController::class, 'getTotalPinjaman'])->name('getTotalPinjaman');
         Route::get('dendaPinjamanSSE', [SSEController::class, 'dendaPinjamanSSE'])->name('dendaPinjamanSSE');
         Route::get('denda_pinjaman', [SSEController::class, 'denda_pinjaman'])->name('denda_pinjaman');
         Route::get('getlaporan', [SSEController::class, 'getlaporan'])->name('getlaporan');
@@ -59,6 +59,11 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
         Route::get('getlaporanPotong', [SSEController::class, 'getlaporanPotong'])->name('getlaporanPotong');
         Route::get('getSaldoPerUser', [SSEController::class, 'getSaldoPerUser'])->name('getSaldoPerUser');
         Route::get('getlaporanPinjam', [SSEController::class, 'getlaporanPinjam'])->name('getlaporanPinjam');
+
+
+        Route::get('getTotalNasabah', [SSEController::class, 'getTotalNasabah'])->name('getTotalNasabah');
+        Route::get('getTotalSimpanan', [SSEController::class, 'getTotalSimpanan'])->name('getTotalSimpanan');
+        Route::get('getTotalPinjaman', [SSEController::class, 'getTotalPinjaman'])->name('getTotalPinjaman');
     });
     // Route::get('/Pinjam', [PinjamanController::class, 'index'])->name('Pinjam.index');
     // Route::get('/Crate-Pinjam', [PinjamanController::class, 'create'])->name('Pinjam.create');
