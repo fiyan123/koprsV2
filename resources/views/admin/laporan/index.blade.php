@@ -26,7 +26,6 @@
                         <div class="col-md-3 mb-3">
                             <label for="bulan" class="form-label">Data Bulan</label>
                             <select class="form-control" id="bulan">
-                                <option value="null">Pilih Bulan</option>
                                 @for ($month = 1; $month <= 12; $month++)
                                     @php
                                         $carbonMonth = \Carbon\Carbon::create()->month($month);
