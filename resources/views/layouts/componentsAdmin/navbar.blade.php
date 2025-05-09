@@ -12,7 +12,7 @@
         </button>
         <ul class="navbar-nav navbar-nav-right">
             <li class="nav-item nav-profile">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{{ route('profile', ['id' => Auth::user()->id]) }}" id="profileDropdown">
                     <img src="{{ asset('storage/' . Auth::user()->foto) }}" alt="profile" />
                 </a>
             </li>
