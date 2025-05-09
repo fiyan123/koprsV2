@@ -65,7 +65,7 @@
         <div class="col-lg-6 mb-4">
             <div class="card">
                 <div class="card-body">
-                    <div id="container2" style="width:100%; height:400px;"></div>
+                    <div id="container1" style="width:100%; height:400px;"></div>
                 </div>
             </div>
         </div>
@@ -78,22 +78,37 @@
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-lg-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div id="container2" style="width:100%; height:400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
     <script>
         function renderChartSimpanan(tahun = null, bulan = null) {
             $.ajax({
-                url: "{{ route('laporan.getDataAjax') }}",
+                url: "{{ route('getRekapKeuangan') }}",
                 method: 'GET',
                 data: {
                     tahun: tahun,
                     bulan: bulan
                 },
                 success: function(response) {
+                    const jumlahSimpanan = parseFloat(response.count_jumlah_all.replace(/,/g, '')) || 0;
+                    const jumlahPinjaman = parseFloat(response.total_jumlah_pinjaman_all.replace(/,/g, '')) ||
+                    0;
+                    const jumlahAnggota = response.count_nasabah_all || 0;
+
                     Highcharts.chart('container2', {
                         title: {
-                            text: `Jumlah Simpanan dan Anggota (${tahun}/${bulan})`,
+                            text: `Jumlah Simpanan, Pinjaman dan Anggota (${tahun}/${bulan})`,
                             align: 'left'
                         },
                         yAxis: {
@@ -117,12 +132,21 @@
                             }
                         },
                         series: [{
-                            name: 'Jumlah Simpanan',
-                            data: [response.count_jumlah_all]
-                        }, {
-                            name: 'Jumlah Anggota',
-                            data: [response.jumlah_anggota]
-                        }],
+                                name: 'Jumlah Simpanan',
+                                data: [jumlahSimpanan],
+                                color: '#007bff'
+                            },
+                            {
+                                name: 'Jumlah Pinjaman',
+                                data: [jumlahPinjaman],
+                                color: '#28a745'
+                            },
+                            {
+                                name: 'Jumlah Anggota',
+                                data: [jumlahAnggota],
+                                color: '#ffc107'
+                            }
+                        ],
                         responsive: {
                             rules: [{
                                 condition: {
@@ -145,10 +169,101 @@
             });
         }
 
+        function loadBarCharts() {
+            const tahun = $('#tahun').val();
+            const bulan = $('#bulan').val();
+
+            $.ajax({
+                url: "{{ route('getRekapKeuangan') }}",
+                method: 'GET',
+                data: {
+                    tahun,
+                    bulan
+                },
+                success: function(response) {
+                    const jumlahSimpanan = parseFloat(response.count_jumlah_all.replace(/,/g, '')) || 0;
+                    const jumlahPinjaman = parseFloat(response.total_jumlah_pinjaman_all.replace(/,/g, '')) ||
+                        0;
+                    const jumlahNasabah = response.count_nasabah_all || 0;
+
+                    // Container 1: Simpanan
+                    Highcharts.chart('container1', {
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Data Simpanan'
+                        },
+                        xAxis: {
+                            categories: ['Jumlah Nasabah', 'Total Simpanan']
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Nilai (Rp)'
+                            }
+                        },
+                        series: [{
+                            name: 'Simpanan',
+                            data: [jumlahNasabah, jumlahSimpanan],
+                            color: '#007bff'
+                        }]
+                    });
+
+                    // Container 3: Pinjaman
+                    Highcharts.chart('container3', {
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Data Pinjaman'
+                        },
+                        xAxis: {
+                            categories: ['Jumlah Nasabah', 'Total Pinjaman']
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Nilai (Rp)'
+                            }
+                        },
+                        series: [{
+                            name: 'Pinjaman',
+                            data: [jumlahNasabah, jumlahPinjaman],
+                            color: '#28a745'
+                        }]
+                    });
+                },
+                error: function(xhr) {
+                    console.error("Gagal mengambil data rekap:", xhr.responseText);
+                }
+            });
+        }
+
+        function renderData(tahun = null, bulan = null) {
+            $.ajax({
+                url: "{{ route('getRekapKeuangan') }}",
+                method: 'GET',
+                data: {
+                    tahun: tahun,
+                    bulan: bulan
+                },
+                success: function(response) {
+                    console.log(response);
+                    $('#total-nasabah').text(response.count_nasabah_all);
+                    $('#total-simpanan').text(response.count_jumlah_all);
+                    $('#total-pinjaman').text(response.total_jumlah_pinjaman_all);
+                },
+                error: function(xhr) {
+                    console.error("Gagal memuat data:", xhr.responseText);
+                }
+            });
+        }
+
         function filterData() {
             const tahun = $('#tahun').val();
             const bulan = $('#bulan').val();
             renderChartSimpanan(tahun, bulan);
+            loadBarCharts(tahun, bulan);
+            renderData(tahun, bulan);
         }
 
         // Panggil default saat halaman pertama kali dimuat
@@ -156,76 +271,8 @@
             const tahun = $('#tahun').val();
             const bulan = $('#bulan').val();
             renderChartSimpanan(tahun, bulan);
-            Highcharts.chart('container3', {
-                chart: {
-                    type: 'pie',
-                    zooming: {
-                        type: 'xy'
-                    },
-                    panning: {
-                        enabled: true,
-                        type: 'xy'
-                    },
-                    panKey: 'shift'
-                },
-                title: {
-                    text: 'Persentase Pinjaman dan Simpanan'
-                },
-                tooltip: {
-                    valueSuffix: '%'
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: [{
-                            enabled: true,
-                            distance: 20
-                        }, {
-                            enabled: true,
-                            distance: -40,
-                            format: '{point.percentage:.1f}%',
-                            style: {
-                                fontSize: '1.2em',
-                                textOutline: 'none',
-                                opacity: 0.7
-                            },
-                            filter: {
-                                operator: '>',
-                                property: 'percentage',
-                                value: 10
-                            }
-                        }]
-                    }
-                },
-                series: [{
-                    name: 'Percentage',
-                    colorByPoint: true,
-                    data: [{
-                            name: 'Water',
-                            y: 55.02
-                        },
-                        {
-                            name: 'Fat',
-                            sliced: true,
-                            selected: true,
-                            y: 26.71
-                        },
-                        {
-                            name: 'Carbohydrates',
-                            y: 1.09
-                        },
-                        {
-                            name: 'Protein',
-                            y: 15.5
-                        },
-                        {
-                            name: 'Ash',
-                            y: 1.68
-                        }
-                    ]
-                }]
-            });
+            loadBarCharts(tahun, bulan);
+            renderData(tahun, bulan);
         });
     </script>
 @endpush

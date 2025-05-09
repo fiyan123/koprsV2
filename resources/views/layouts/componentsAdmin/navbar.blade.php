@@ -16,7 +16,7 @@
                     <img src="{{ asset('storage/' . Auth::user()->foto) }}" alt="profile" />
                 </a>
             </li>
-            <li class="nav-item dropdown">
+            {{-- <li class="nav-item dropdown">
                 <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
                     data-toggle="dropdown">
                     <i class="icon-bell mx-0"></i>
@@ -65,7 +65,7 @@
                         </div>
                     </a>
                 </div>
-            </li>
+            </li> --}}
             <li class="nav-item dropdown">
                 <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                     class="logout-link">

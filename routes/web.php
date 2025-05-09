@@ -64,6 +64,7 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
         Route::get('getTotalNasabah', [SSEController::class, 'getTotalNasabah'])->name('getTotalNasabah');
         Route::get('getTotalSimpanan', [SSEController::class, 'getTotalSimpanan'])->name('getTotalSimpanan');
         Route::get('getTotalPinjaman', [SSEController::class, 'getTotalPinjaman'])->name('getTotalPinjaman');
+        Route::get('getRekapKeuangan', [DashboardMenuController::class, 'getRekapKeuangan'])->name('getRekapKeuangan');
     });
     // Route::get('/Pinjam', [PinjamanController::class, 'index'])->name('Pinjam.index');
     // Route::get('/Crate-Pinjam', [PinjamanController::class, 'create'])->name('Pinjam.create');
