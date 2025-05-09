@@ -21,6 +21,7 @@
                                     <th scope="col" class="min-w-100px">NIP</th>
                                     <th scope="col" class="min-w-100px">Tanggal Lahir</th>
                                     <th scope="col" class="min-w-100px">Alamat</th>
+                                    <th scope="col" class="min-w-100px">Saldo</th>
                                     <th scope="col" class="min-w-100px">Actions</th>
                                 </tr>
                             </thead>
@@ -103,6 +104,7 @@
                     { data: 'tgl_lahir' },
                     { data: 'nip' },
                     { data: 'alamat' },
+                    { data: 'saldo_akhir' },
                     {
                         data: 'action',
                         className: "text-center",

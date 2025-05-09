@@ -10,6 +10,41 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SSEController extends Controller
 {
+public function getSaldoPerUser()
+{
+    $data = DB::table('users')
+        ->join('role_user', 'users.id', '=', 'role_user.user_id')
+        ->join('roles', 'role_user.role_id', '=', 'roles.id')
+        ->leftJoin('simpanans as simpan', function ($join) {
+            $join->on('users.id', '=', 'simpan.user_id')
+                ->where('simpan.status', '=', 'simpan');
+        })
+        ->leftJoin('simpanans as tarik', function ($join) {
+            $join->on('users.id', '=', 'tarik.user_id')
+                ->where('tarik.status', '=', 'tarik');
+        })
+        ->leftJoin('simpanans as potong', function ($join) {
+            $join->on('users.id', '=', 'potong.user_id')
+                ->where('potong.status', '=', 'potong');
+        })
+        ->where('roles.id', 3) // Filter hanya role_id = 3 (misalnya: santri)
+        ->select(
+            'users.*',
+            DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) as total_simpan'),
+            DB::raw('COALESCE(SUM(DISTINCT tarik.jumlah), 0) as total_tarik'),
+            DB::raw('COALESCE(SUM(DISTINCT potong.jumlah), 0) as total_potong'),
+            DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) - (COALESCE(SUM(DISTINCT tarik.jumlah), 0) + COALESCE(SUM(DISTINCT potong.jumlah), 0)) as saldo_akhir')
+        )
+        ->groupBy('users.id')
+        ->get();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Data saldo akhir per user berhasil diambil.',
+        'data' => $data
+    ]);
+}
+
   public function getlaporan(Request $request)
 {
     // Ambil data total simpan per user
@@ -54,7 +89,7 @@ class SSEController extends Controller
         // Saldo akhir per user
         $saldo[$itemSimpan->user_id] = [
             'user_id' => $itemSimpan->user_id,
-            'saldo_akhir' => $sumTarik + $sumPotong - $itemSimpan->sum_jumlah,
+            'saldo_akhir' => $itemSimpan->sum_jumlah - ($sumTarik + $sumPotong ),
             'status' => 'simpan'
         ];
     }

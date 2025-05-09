@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Pinjaman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -13,31 +14,53 @@ use Illuminate\Support\Facades\Validator;
 
 class AnggotaController extends Controller
 {
-    public function index(Request $request)
-    {
-        if ($request->ajax()) {
-            $data = DB::table('users')
-                ->join('role_user', 'users.id', '=', 'role_user.user_id')
-                ->join('roles', 'role_user.role_id', '=', 'roles.id')
-                ->where('roles.id', 3)
-                ->select('users.id', 'users.name', 'users.email', 'users.tgl_lahir', 'users.nip', 'users.alamat')
-                ->get();
+   public function index(Request $request)
+{
+    if ($request->ajax()) {
+           $data = DB::table('users')
+        ->join('role_user', 'users.id', '=', 'role_user.user_id')
+        ->join('roles', 'role_user.role_id', '=', 'roles.id')
+        ->leftJoin('simpanans as simpan', function ($join) {
+            $join->on('users.id', '=', 'simpan.user_id')
+                ->where('simpan.status', '=', 'simpan');
+        })
+        ->leftJoin('simpanans as tarik', function ($join) {
+            $join->on('users.id', '=', 'tarik.user_id')
+                ->where('tarik.status', '=', 'tarik');
+        })
+        ->leftJoin('simpanans as potong', function ($join) {
+            $join->on('users.id', '=', 'potong.user_id')
+                ->where('potong.status', '=', 'potong');
+        })
+        ->where('roles.id', 3) // Filter hanya role_id = 3 (misalnya: santri)
+        ->select(
+            'users.*',
+            DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) as total_simpan'),
+            DB::raw('COALESCE(SUM(DISTINCT tarik.jumlah), 0) as total_tarik'),
+            DB::raw('COALESCE(SUM(DISTINCT potong.jumlah), 0) as total_potong'),
+            DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) - (COALESCE(SUM(DISTINCT tarik.jumlah), 0) + COALESCE(SUM(DISTINCT potong.jumlah), 0)) as saldo_akhir')
+        )
+        ->groupBy('users.id')
+        ->get();
 
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $btn = '
-                        <a href="' . route('anggota.show', $row->id) . '" class="btn btn-sm btn-info">Detail</a>
-                        <a href="' . route('anggota.edit', $row->id) . '" class="btn btn-sm btn-primary">Edit</a>
-                    ';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                $btn = '<a href="' . route('anggota.show', $row->id) . '" class="btn btn-sm btn-info">Detail</a> ';
 
-        return view('admin.anggota.index');
+                if (auth()->user()->hasRole('admin')) {
+                    $btn .= '<a href="' . route('anggota.edit', $row->id) . '" class="btn btn-sm btn-primary">Edit</a>';
+                }
+
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
+
+    return view('admin.anggota.index');
+}
+
 
     public function create()
     {
@@ -139,7 +162,33 @@ class AnggotaController extends Controller
 
     public function show($id)
     {
-        $user = User::findOrFail($id);
+        // $user = User::findOrFail($id);
+          $user = DB::table('users')
+          ->where('users.id',$id)
+        ->join('role_user', 'users.id', '=', 'role_user.user_id')
+        ->join('roles', 'role_user.role_id', '=', 'roles.id')
+        ->leftJoin('simpanans as simpan', function ($join) {
+            $join->on('users.id', '=', 'simpan.user_id')
+                ->where('simpan.status', '=', 'simpan');
+        })
+        ->leftJoin('simpanans as tarik', function ($join) {
+            $join->on('users.id', '=', 'tarik.user_id')
+                ->where('tarik.status', '=', 'tarik');
+        })
+        ->leftJoin('simpanans as potong', function ($join) {
+            $join->on('users.id', '=', 'potong.user_id')
+                ->where('potong.status', '=', 'potong');
+        })
+        ->where('roles.id', 3) // Filter hanya role_id = 3 (misalnya: santri)
+        ->select(
+            'users.*',
+            DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) as total_simpan'),
+            DB::raw('COALESCE(SUM(DISTINCT tarik.jumlah), 0) as total_tarik'),
+            DB::raw('COALESCE(SUM(DISTINCT potong.jumlah), 0) as total_potong'),
+            DB::raw('COALESCE(SUM(DISTINCT simpan.jumlah), 0) - (COALESCE(SUM(DISTINCT tarik.jumlah), 0) + COALESCE(SUM(DISTINCT potong.jumlah), 0)) as saldo_akhir')
+        )
+        ->groupBy('users.id')
+        ->first();
         return view('admin.anggota.show', compact('user'));
     }
 

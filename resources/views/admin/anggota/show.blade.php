@@ -38,9 +38,13 @@
                         <strong>Tanggal Lahir:</strong><br>
                         {{ \Carbon\Carbon::parse($user->tgl_lahir)->format('d-m-Y') }}
                     </div>
-                    <div class="col-md-12 mb-3">
+                    <div class="col-md-6 mb-3">
                         <strong>Alamat:</strong><br>
                         {{ $user->alamat ?? '-' }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Saldo:</strong><br>
+                        {{ $user->saldo_akhir ?? '-' }}
                     </div>
 
                     <!-- Foto Section -->
