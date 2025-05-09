@@ -52,6 +52,10 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
         Route::get('getTotalPinjaman', [SSEController::class, 'getTotalPinjaman'])->name('getTotalPinjaman');
         Route::get('dendaPinjamanSSE', [SSEController::class, 'dendaPinjamanSSE'])->name('dendaPinjamanSSE');
         Route::get('denda_pinjaman', [SSEController::class, 'denda_pinjaman'])->name('denda_pinjaman');
+        Route::get('getlaporan', [SSEController::class, 'getlaporan'])->name('getlaporan');
+        Route::get('getlaporanSimpan', [SSEController::class, 'getlaporanSimpan'])->name('getlaporanSimpan');
+        Route::get('getlaporanTarik', [SSEController::class, 'getlaporanTarik'])->name('getlaporanTarik');
+        Route::get('getlaporanPotong', [SSEController::class, 'getlaporanPotong'])->name('getlaporanPotong');
     });
     // Route::get('/Pinjam', [PinjamanController::class, 'index'])->name('Pinjam.index');
     // Route::get('/Crate-Pinjam', [PinjamanController::class, 'create'])->name('Pinjam.create');
