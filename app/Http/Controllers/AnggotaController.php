@@ -69,7 +69,7 @@ if ($hakakses) {
                 $btn = '<a href="' . route('anggota.show', $row->id) . '" class="btn btn-sm btn-info">Detail</a> ';
 
                 if (auth()->user()->hasRole('admin')) {
-                    $btn .= '<a href="' . route('anggota.edit', $row->id) . '" class="btn btn-sm btn-primary">Edit</a>';
+                    $btn .= '<a href="' . route('anggota.edit_password', $row->id) . '" class="btn btn-sm btn-primary">Edit Password</a>';
                 }
 
                 return $btn;
@@ -83,6 +83,49 @@ if ($hakakses) {
 
 }
 
+
+    public function edit_password($id)
+    {
+                        $user = User::findOrFail($id);
+
+        return view('admin.anggota.edit_password',compact('user'));
+    }
+
+public function updatePassword(Request $request, $id)
+{
+    // Custom validation inline untuk password yang kuat
+    $validator = Validator::make($request->all(), [
+        'password' => [
+            'required',
+            'confirmed',
+            function ($attribute, $value, $fail) {
+                if (
+                    !preg_match('/[A-Z]/', $value) ||
+                    !preg_match('/[a-z]/', $value) ||
+                    !preg_match('/[0-9]/', $value) ||
+                    strlen($value) < 8
+                ) {
+                    $fail('Password harus memiliki minimal 8 karakter, huruf besar, huruf kecil, dan angka.');
+                }
+            }
+        ]
+    ]);
+
+    if ($validator->fails()) {
+        return redirect()->back()
+            ->withErrors($validator)
+            ->withInput();
+    }
+
+    // Temukan user berdasarkan ID
+    $user = User::findOrFail($id);
+
+    // Update password
+    $user->password = Hash::make($request->password);
+    $user->save();
+
+    return redirect()->route('home')->with('success', 'Password berhasil diperbarui.');
+}
 
     public function create()
     {
@@ -188,17 +231,17 @@ if ($hakakses) {
     }
 
 
-    public function edit($id)
-    {
-        $hakakses = $this->HakaksesLogin(Auth::id());
+    // public function edit($id)
+    // {
+    //     $hakakses = $this->HakaksesLogin(Auth::id());
 
-        if ($hakakses) {
-            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
-        } else {
-            $user = User::findOrFail($id);
-            return view('admin.anggota.edit', compact('user'));
-        }
-    }
+    //     if ($hakakses) {
+    //         return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+    //     } else {
+    //         $user = User::findOrFail($id);
+    //         return view('admin.anggota.edit', compact('user'));
+    //     }
+    // }
 
     public function show($id)
     {

@@ -79,9 +79,11 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
         Route::get('/', [AnggotaController::class, 'index'])->name('anggota.index');
         Route::get('create', [AnggotaController::class, 'create'])->name('anggota.create');
         Route::post('store', [AnggotaController::class, 'store'])->name('anggota.store');
-        Route::get('edit/{id}', [AnggotaController::class, 'edit'])->name('anggota.edit');
+        // Route::get('edit/{id}', [AnggotaController::class, 'edit'])->name('anggota.edit');
         Route::get('show/{id}', [AnggotaController::class, 'show'])->name('anggota.show');
         Route::patch('update/{id}', [AnggotaController::class, 'update'])->name('anggota.update');
+        Route::get('edit_password/{id}', [AnggotaController::class, 'edit_password'])->name('anggota.edit_password');
+        Route::patch('updatePassword/{id}', [AnggotaController::class, 'updatePassword'])->name('anggota.updatePassword');
     });
 
 

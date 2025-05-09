@@ -3,7 +3,7 @@
 @section('title', 'Detail User')
 
 @section('breadcrumb')
-    <x-dashboard.breadcrumb title="Detail User" page="Halaman User" active="Detail" route="{{ route('home') }}" />
+    <x-dashboard.breadcrumb title="Detail User" page="Home" active="Profile" route="{{ route('home') }}" />
 @endsection
 
 @section('content')
@@ -82,7 +82,11 @@
 
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title mb-4">Edit Profil User</h4>
+            <div class="card-body d-flex justify-content-between align-items-center mb-4">
+                <h4 class="card-title m-0">Edit Profil User</h4>
+                <a href="{{ route('anggota.edit_password', $user->id) }}" class="btn btn-primary">Edit Password</a>
+            </div>
+
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>

@@ -18,7 +18,7 @@
                             <a href="{{ url('/#coreValues') }}" class="dropdown-item">Values</a>
                             <a href="{{ url('/#strukturOrganisasi') }}" class="dropdown-item">Struktur Organisasi</a>
                             <a href="{{ url('/#programKerja') }}" class="dropdown-item">Program Kerja</a>
-                            <a href="{{ url('/#hubungiKami') }}" class="dropdown-item">Hubungi Kami</a>
+                            {{-- <a href="{{ url('/#hubungiKami') }}" class="dropdown-item">Hubungi Kami</a> --}}
                         </div>
                     </div>
 
