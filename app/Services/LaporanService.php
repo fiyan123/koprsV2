@@ -6,31 +6,52 @@ use Illuminate\Support\Facades\DB;
 
 class LaporanService
 {
-    public function generateLaporanSimpanan()
+    public function generateLaporanSimpanan($tahun = null, $bulan = null)
     {
         // Ambil data total simpan per user
         $simpan = DB::table('simpanans')
             ->select('user_id', DB::raw('SUM(jumlah) as sum_jumlah'), 'status')
             ->where('status', 'simpan')
             ->groupBy('user_id', 'status')
-            ->orderBy('user_id')
-            ->get();
+            ->orderBy('user_id');
+
+        if ($tahun) {
+            $simpan->whereYear('created_at', $tahun);
+        }
+        if ($bulan) {
+            $simpan->whereMonth('created_at', $bulan);
+        }
+        $simpan = $simpan->get();
 
         // Ambil data total tarik per user
         $tarik = DB::table('simpanans')
             ->select('user_id', DB::raw('SUM(jumlah) as sum_jumlah'), 'status')
             ->where('status', 'tarik')
             ->groupBy('user_id', 'status')
-            ->orderBy('user_id')
-            ->get();
+            ->orderBy('user_id');
+
+        if ($tahun) {
+            $tarik->whereYear('created_at', $tahun);
+        }
+        if ($bulan) {
+            $tarik->whereMonth('created_at', $bulan);
+        }
+        $tarik = $tarik->get();
 
         // Ambil data total potong per user
         $potong = DB::table('simpanans')
             ->select('user_id', DB::raw('SUM(jumlah) as sum_jumlah'), 'status')
             ->where('status', 'potong')
             ->groupBy('user_id', 'status')
-            ->orderBy('user_id')
-            ->get();
+            ->orderBy('user_id');
+
+        if ($tahun) {
+            $potong->whereYear('created_at', $tahun);
+        }
+        if ($bulan) {
+            $potong->whereMonth('created_at', $bulan);
+        }
+        $potong = $potong->get();
 
         // Menghitung saldo akhir per user (tarik + potong - simpan)
         $saldo = [];

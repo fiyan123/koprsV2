@@ -17,12 +17,25 @@ class LaporanController extends Controller
         return view('admin.laporan.index');
     }
 
+    public function getDataAjax(Request $request, LaporanService $laporanService)
+    {
+        $tahun = $request->query('tahun') ?? now()->year;
+        $bulan = $request->query('bulan') ?? now()->month;
+
+        $laporan = $laporanService->generateLaporanSimpanan($tahun, $bulan);
+
+        return response()->json([
+            'jumlah_simpanan' => $laporan['total_all']['count_jumlah_simpan'],
+            'jumlah_anggota' => $laporan['total_all']['count_user_simpan']
+        ]);
+    }
+
     public function laporan_simpanan(Request $request, LaporanService $laporanService)
     {
-        $tahun = $request->query('tahun');
-        $bulan = $request->query('bulan');
+        $tahun = $request->query('tahun') ?? now()->year;
+        $bulan = $request->query('bulan') ?? now()->month;
 
-        $laporan = $laporanService->generateLaporanSimpanan();
+        $laporan = $laporanService->generateLaporanSimpanan($tahun, $bulan);
 
         $pdf = Pdf::loadView('pdf.export_simpanan', [
             'data' => $laporan['data'],

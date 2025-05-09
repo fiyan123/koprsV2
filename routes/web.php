@@ -122,6 +122,9 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
         Route::get('/', [LaporanController::class, 'index'])->name('laporan');
         Route::get('/simpanan', [LaporanController::class, 'laporan_simpanan'])->name('laporan.simpanan');
         Route::get('/pinjaman', [LaporanController::class, 'laporan_pinjaman'])->name('laporan.pinjaman');
+        Route::get('/data-simpanan', [LaporanController::class, 'getDataAjax'])->name('laporan.data-simpanan');
+        Route::get('/get-data', [LaporanController::class, 'getDataAjax'])->name('laporan.getDataAjax');
+
     });
 
     Route::group(['prefix' => 'profile'], function() {

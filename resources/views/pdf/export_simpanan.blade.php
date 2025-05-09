@@ -58,14 +58,18 @@
         </thead>
         <tbody>
             @php $no = 1; @endphp
-            @foreach ($data as $item)
+            @forelse ($data as $item)
                 <tr>
                     <td>{{ $no++ }}</td>
                     <td>{{ $item['user_id'] }}</td>
                     <td>Rp {{ number_format($item['saldo_akhir'], 0, ',', '.') }}</td>
                     <td>{{ $item['status'] }}</td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="4" style="text-align: center;">Tidak ada data tersedia</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 
