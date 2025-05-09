@@ -170,23 +170,27 @@
             const bulan = $('#bulan').val();
 
             $.ajax({
-                url: "{{ route('getRekapKeuangan') }}",
+                url: "{{ route('getlaporan') }}",
                 method: 'GET',
                 data: {
-                    tahun,
-                    bulan
+                    tahun: tahun,
+                    bulan: bulan,
                 },
                 success: function(response) {
-                    const jumlahSimpanan = parseFloat(response.count_jumlah_all.replace(/,/g, '')) || 0;
-                    const jumlahNasabah = parseInt(response.count_nasabah_all) || 0;
+                    const total = response.total_all;
 
-                    // Container 1: Simpanan (Pie)
+                    const jumlahSimpan = parseFloat(total.count_jumlah_simpan) || 0;
+                    const jumlahTarik = parseFloat(total.count_jumlah_tarik) || 0;
+                    const jumlahPotong = parseFloat(total.count_jumlah_potong) || 0;
+                    const jumlahAll = parseFloat(total.count_jumlah_all) || 0;
+
+                    // Pie Chart: Komposisi Simpanan
                     Highcharts.chart('container1', {
                         chart: {
                             type: 'pie'
                         },
                         title: {
-                            text: `Komposisi Data Simpanan (${tahun}/${bulan})`
+                            text: `Komposisi Data Keuangan (${tahun}/${bulan})`
                         },
                         tooltip: {
                             pointFormat: '{series.name}: <b>{point.y:,.0f}</b>'
@@ -197,23 +201,27 @@
                                 cursor: 'pointer',
                                 dataLabels: {
                                     enabled: true,
-                                    format: '<b>{point.name}</b>: {point.y:,.0f}',
-                                    style: {
-                                        fontSize: '13px'
-                                    }
                                 }
                             }
                         },
                         series: [{
-                            name: 'Simpanan',
+                            name: 'Jumlah (Rp)',
                             colorByPoint: true,
                             data: [{
-                                    name: 'Jumlah Nasabah',
-                                    y: jumlahNasabah
+                                    name: 'Simpanan',
+                                    y: jumlahSimpan
                                 },
                                 {
-                                    name: 'Total Simpanan',
-                                    y: jumlahSimpanan
+                                    name: 'Penarikan',
+                                    y: jumlahTarik
+                                },
+                                {
+                                    name: 'Pemotongan',
+                                    y: jumlahPotong
+                                },
+                                {
+                                    name: 'Total Akhir',
+                                    y: jumlahAll
                                 }
                             ]
                         }]
@@ -259,6 +267,15 @@
                         },
                         tooltip: {
                             pointFormat: '{series.name}: <b>{point.y:,.0f}</b>'
+                        },
+                        plotOptions: {
+                            pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                dataLabels: {
+                                    enabled: true,
+                                }
+                            }
                         },
                         series: [{
                             name: 'Detail',
