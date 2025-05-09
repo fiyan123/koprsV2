@@ -80,7 +80,7 @@
                         <div class="mt-4">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="fw-bold mb-0">Data Pinjaman</h5>
-                                <a href="#" id="exportPinjaman" class="btn btn-sm btn-primary mb-3">
+                                <a href="#" id="exportPinjaman" class="btn btn-sm btn-success mb-3">
                                     <i class="fas fa-file-export me-1"></i> Export Pinjaman
                                 </a>
                             </div>
