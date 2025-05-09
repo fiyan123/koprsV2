@@ -12,6 +12,18 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PinjamanController extends Controller
 {
+       public function HakaksesLogin($user_id)
+        {
+            $user = DB::table('users')
+                ->join('role_user', 'users.id', '=', 'role_user.user_id')
+                ->join('roles', 'role_user.role_id', '=', 'roles.id')
+                ->where('users.id', $user_id)
+                ->where('roles.id', 3) // role_id 3 = anggota
+                ->select('users.id')
+                ->first();
+
+            return $user ? true : false;
+        }
     public function index(Request $request)
     {
         $id = Auth::id();
@@ -96,154 +108,184 @@ class PinjamanController extends Controller
 
 public function approve($id)
 {
-    $pinjaman = Pinjaman::findOrFail($id);
+   $hakakses = $this->HakaksesLogin(Auth::id());
 
-    $pinjaman->status = 'approved';
-    $pinjaman->save();
+    if ($hakakses) {
+        return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+    } else {
 
-    return redirect()->route('pinjaman.index')->with('success', 'Pinjaman berhasil disetujui.');
+        $pinjaman = Pinjaman::findOrFail($id);
+
+        $pinjaman->status = 'approved';
+        $pinjaman->save();
+
+        return redirect()->route('pinjaman.index')->with('success', 'Pinjaman berhasil disetujui.');
+    }
 }
 
 public function reject($id)
 {
-    $pinjaman = Pinjaman::findOrFail($id);
-    $pinjaman->status = 'rejected';
-    $pinjaman->status_pinjaman = 'tidak_aktif';
-    $pinjaman->save();
+    $hakakses = $this->HakaksesLogin(Auth::id());
 
-    return redirect()->route('pinjaman.index')->with('success', 'Pinjaman ditolak.');
+    if ($hakakses) {
+        return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+    } else {
+        $pinjaman = Pinjaman::findOrFail($id);
+        $pinjaman->status = 'rejected';
+        $pinjaman->status_pinjaman = 'tidak_aktif';
+        $pinjaman->save();
+
+        return redirect()->route('pinjaman.index')->with('success', 'Pinjaman ditolak.');
+    }
 }
 
 
     public function create()
     {
-        $users = User::all();
-        return view('admin.pinjam.create', compact('users'));
+         $hakakses = $this->HakaksesLogin(Auth::id());
+
+        if (!$hakakses) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        } else {
+                $users = User::all();
+                return view('admin.pinjam.create', compact('users'));
+        }
     }
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'jumlah' => 'required|numeric|min:1',
-            'tipe_durasi' => 'required|in:harian,bulanan,tahunan',
-            'durasi' => 'required|integer|min:1',
-            'no_rekening' => 'required|string|max:255',
-            'nip' => 'required',
-            'alamat' => 'nullable|string',
-            'no_ktp' => 'nullable|string|max:50',
-            'tgl_lahir' => 'nullable|date',
-            'no_hp' => 'nullable|string|max:20',
-            'foto' => 'required|image|mimes:jpg,jpeg,png|max:5120',
-            'foto_ktp' => 'required|image|mimes:jpg,jpeg,png|max:5120',
-            'foto_dengan_ktp' => 'required|image|mimes:jpg,jpeg,png|max:5120',
-        ]);
-        try {
-            DB::beginTransaction();
+         $hakakses = $this->HakaksesLogin(Auth::id());
 
-            $jumlah = $validated['jumlah'];
-            $tipe = $validated['tipe_durasi'];
-            $durasi = $validated['durasi'];
-            $noRekening = $validated['no_rekening'];
-
-            $bungaPersen = match ($tipe) {
-                'harian' => 1,
-                'bulanan' => 4,
-                'tahunan' => 8,
-            };
-
-            $totalBunga = ($bungaPersen / 100) * $jumlah * $durasi;
-            $totalPembayaran = $jumlah + $totalBunga;
-            $cicilanPerPembayaran = $totalPembayaran / $durasi;
-
-            // Ambil user anggota
-            $user_id = Auth::id();
-            $user = DB::table('users')
-                ->join('role_user', 'users.id', '=', 'role_user.user_id')
-                ->join('roles', 'role_user.role_id', '=', 'roles.id')
-                ->where('users.id', $user_id)
-                ->where('roles.id', 3) // Anggota
-                ->select('users.*')
-                ->first();
-
-            if (!$user) {
-                return redirect()->back()->withErrors('Akun ini bukan anggota.');
-            }
-            $year = now()->year;
-
-            // Validasi file
-            if (
-                !$request->hasFile('foto') || !$request->file('foto')->isValid() ||
-                !$request->hasFile('foto_ktp') || !$request->file('foto_ktp')->isValid() ||
-                !$request->hasFile('foto_dengan_ktp') || !$request->file('foto_dengan_ktp')->isValid()
-            ) {
-                return redirect()->back()->withInput()->with('toast_error', 'Semua foto harus diunggah dan valid.');
-            }
-
-            // Upload file
-            $foto = $request->file('foto')->store("foto_user/{$year}", 'public');
-            $fotoKtp = $request->file('foto_ktp')->store("foto_ktp/{$year}", 'public');
-            $fotoDenganKtp = $request->file('foto_dengan_ktp')->store("foto_dengan_ktp/{$year}", 'public');
-
-            // Simpan pinjaman
-            $pinjaman = Pinjaman::create([
-                'user_id' => $user->id,
-                'nama' => $user->name,
-                'tgl_lahir' => $request->tgl_lahir,
-                'nip' => $request->nip,
-                'email' => $user->email,
-                'alamat' => $request->alamat,
-                'no_rek' => $noRekening,
-                'no_ktp' => $request->no_ktp,
-                'no_hp' => $request->no_hp,
-                'foto' => $foto,
-                'foto_ktp' => $fotoKtp,
-                'foto_dengan_ktp' => $fotoDenganKtp,
-                'jumlah' => number_format($jumlah, 2, '.', ''),
-                'tipe_durasi' => $tipe,
-                'durasi' => $durasi,
-                'bunga' => $bungaPersen,
-                'total_bunga' => number_format($totalBunga, 2, '.', ''),
-                'total_pembayaran' => number_format($totalPembayaran, 2, '.', ''),
-                'cicilan_pembayaran' => number_format($cicilanPerPembayaran, 2, '.', ''),
-                'status' => 'pending',
-                'status_pinjaman' => 'aktif'
+        if (!$hakakses) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        } else {
+            $validated = $request->validate([
+                'jumlah' => 'required|numeric|min:1',
+                'tipe_durasi' => 'required|in:harian,bulanan,tahunan',
+                'durasi' => 'required|integer|min:1',
+                'no_rekening' => 'required|string|max:255',
+                'nip' => 'required',
+                'alamat' => 'nullable|string',
+                'no_ktp' => 'nullable|string|max:50',
+                'tgl_lahir' => 'nullable|date',
+                'no_hp' => 'nullable|string|max:20',
+                'foto' => 'required|image|mimes:jpg,jpeg,png|max:5120',
+                'foto_ktp' => 'required|image|mimes:jpg,jpeg,png|max:5120',
+                'foto_dengan_ktp' => 'required|image|mimes:jpg,jpeg,png|max:5120',
             ]);
+            try {
+                DB::beginTransaction();
 
-            // Simpan angsuran
-            $startDate = now();
-            for ($i = 1; $i <= $durasi; $i++) {
-                $jatuhTempo = match ($tipe) {
-                    'harian' => $startDate->copy()->addDays($i),
-                    'bulanan' => $startDate->copy()->addMonths($i),
-                    'tahunan' => $startDate->copy()->addYears($i),
+                $jumlah = $validated['jumlah'];
+                $tipe = $validated['tipe_durasi'];
+                $durasi = $validated['durasi'];
+                $noRekening = $validated['no_rekening'];
+
+                $bungaPersen = match ($tipe) {
+                    'harian' => 1,
+                    'bulanan' => 4,
+                    'tahunan' => 8,
                 };
-                DB::table('angsuran_pinjaman')->insert([
 
-                    'pinjaman_id' => $pinjaman->id,
+                $totalBunga = ($bungaPersen / 100) * $jumlah * $durasi;
+                $totalPembayaran = $jumlah + $totalBunga;
+                $cicilanPerPembayaran = $totalPembayaran / $durasi;
+
+                // Ambil user anggota
+                $user_id = Auth::id();
+                $user = DB::table('users')
+                    ->join('role_user', 'users.id', '=', 'role_user.user_id')
+                    ->join('roles', 'role_user.role_id', '=', 'roles.id')
+                    ->where('users.id', $user_id)
+                    ->where('roles.id', 3) // Anggota
+                    ->select('users.*')
+                    ->first();
+
+                if (!$user) {
+                    return redirect()->back()->withErrors('Akun ini bukan anggota.');
+                }
+                $year = now()->year;
+
+                // Validasi file
+                if (
+                    !$request->hasFile('foto') || !$request->file('foto')->isValid() ||
+                    !$request->hasFile('foto_ktp') || !$request->file('foto_ktp')->isValid() ||
+                    !$request->hasFile('foto_dengan_ktp') || !$request->file('foto_dengan_ktp')->isValid()
+                ) {
+                    return redirect()->back()->withInput()->with('toast_error', 'Semua foto harus diunggah dan valid.');
+                }
+
+                // Upload file
+                $foto = $request->file('foto')->store("foto_user/{$year}", 'public');
+                $fotoKtp = $request->file('foto_ktp')->store("foto_ktp/{$year}", 'public');
+                $fotoDenganKtp = $request->file('foto_dengan_ktp')->store("foto_dengan_ktp/{$year}", 'public');
+
+                // Simpan pinjaman
+                $pinjaman = Pinjaman::create([
                     'user_id' => $user->id,
-                    'angsuran_ke' => $i,
-                    'jatuh_tempo' => $jatuhTempo,
-                    'jumlah_dibayar' => null,
-                    'tanggal_bayar' => null,
-                    'metode_pembayaran' => null,
-                    'denda' => 0,
-                    'total_denda' => 0,
-                    'status' => 'belum_lunas'
+                    'nama' => $user->name,
+                    'tgl_lahir' => $request->tgl_lahir,
+                    'nip' => $request->nip,
+                    'email' => $user->email,
+                    'alamat' => $request->alamat,
+                    'no_rek' => $noRekening,
+                    'no_ktp' => $request->no_ktp,
+                    'no_hp' => $request->no_hp,
+                    'foto' => $foto,
+                    'foto_ktp' => $fotoKtp,
+                    'foto_dengan_ktp' => $fotoDenganKtp,
+                    'jumlah' => number_format($jumlah, 2, '.', ''),
+                    'tipe_durasi' => $tipe,
+                    'durasi' => $durasi,
+                    'bunga' => $bungaPersen,
+                    'total_bunga' => number_format($totalBunga, 2, '.', ''),
+                    'total_pembayaran' => number_format($totalPembayaran, 2, '.', ''),
+                    'cicilan_pembayaran' => number_format($cicilanPerPembayaran, 2, '.', ''),
+                    'status' => 'pending',
+                    'status_pinjaman' => 'aktif'
                 ]);
 
+                // Simpan angsuran
+                $startDate = now();
+                for ($i = 1; $i <= $durasi; $i++) {
+                    $jatuhTempo = match ($tipe) {
+                        'harian' => $startDate->copy()->addDays($i),
+                        'bulanan' => $startDate->copy()->addMonths($i),
+                        'tahunan' => $startDate->copy()->addYears($i),
+                    };
+                    DB::table('angsuran_pinjaman')->insert([
 
+                        'pinjaman_id' => $pinjaman->id,
+                        'user_id' => $user->id,
+                        'angsuran_ke' => $i,
+                        'jatuh_tempo' => $jatuhTempo,
+                        'jumlah_dibayar' => null,
+                        'tanggal_bayar' => null,
+                        'metode_pembayaran' => null,
+                        'denda' => 0,
+                        'total_denda' => 0,
+                        'status' => 'belum_lunas'
+                    ]);
+
+
+                }
+
+                DB::commit();
+                return redirect()->route('pinjaman.index')->with('success', 'Data pinjaman dan angsuran berhasil disimpan.');
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return redirect()->back()->withErrors('Gagal menyimpan data: ' . $e->getMessage());
             }
-
-            DB::commit();
-            return redirect()->route('pinjaman.index')->with('success', 'Data pinjaman dan angsuran berhasil disimpan.');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->withErrors('Gagal menyimpan data: ' . $e->getMessage());
         }
     }
 
     public function bayar($pinjaman_id)
     {
+        $hakakses = $this->HakaksesLogin(Auth::id());
+
+        if (!$hakakses) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        } else {
         // Ambil data pinjaman
         $pinjaman = Pinjaman::findOrFail($pinjaman_id);
         // dd($pinjaman);
@@ -300,10 +342,16 @@ public function reject($id)
         ->first();
         $saldo= $data->saldo_akhir;
         return view('admin.pinjam.bayar', compact('pinjaman', 'angsuran', 'jumlahDibayar','saldo'));
+        }
     }
 
     public function proses_bayar(Request $request, $id)
     {
+        $hakakses = $this->HakaksesLogin(Auth::id());
+
+        if (!$hakakses) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        } else {
         // Validasi metode pembayaran
         $request->validate([
             'metode_pembayaran' => 'required|in:transfer,tabungan',
@@ -452,6 +500,7 @@ public function reject($id)
 
         return redirect()->route('pinjaman.index')->with('success', 'Pembayaran angsuran berhasil!');
     }
+    }
 
 
 public function show($id)
@@ -510,6 +559,11 @@ public function show($id)
 }
 public function destroy(Request $request)
 {
+    $hakakses = $this->HakaksesLogin(Auth::id());
+
+        if (!$hakakses) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        } else {
     $id = $request->input('id');
 
     $pinjaman = Pinjaman::where('id', $id)
@@ -522,5 +576,6 @@ public function destroy(Request $request)
     $pinjaman->delete();
 
     return redirect()->back()->with('success', 'Data pinjaman berhasil dihapus.');
+}
 }
 }

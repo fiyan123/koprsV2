@@ -59,48 +59,6 @@
                 }]
             });
 
-            // DELETE HANDLER
-            $(document).on('click', '.delete', function() {
-                const id = $(this).attr('id');
-
-                Swal.fire({
-                    title: 'Yakin ingin menghapus?',
-                    text: "Data yang dihapus tidak dapat dikembalikan!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya, hapus!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('simpanan.destroy') }}",
-                            type: 'POST',
-                            data: {
-                                id: id,
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function(res) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Berhasil!',
-                                    text: 'Data berhasil dihapus.',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                });
-                                table.ajax.reload();
-                            },
-                            error: function(xhr) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Gagal!',
-                                    text: xhr.responseJSON.message || 'Terjadi kesalahan.',
-                                });
-                            }
-                        });
-                    }
-                });
-            });
         });
     </script>
 @endpush

@@ -12,6 +12,18 @@ use Yajra\DataTables\Facades\DataTables;
 
 class SimpananController extends Controller
 {
+       public function HakaksesLogin($user_id)
+        {
+            $user = DB::table('users')
+                ->join('role_user', 'users.id', '=', 'role_user.user_id')
+                ->join('roles', 'role_user.role_id', '=', 'roles.id')
+                ->where('users.id', $user_id)
+                ->where('roles.id', 3) // role_id 3 = anggota
+                ->select('users.id')
+                ->first();
+
+            return $user ? true : false;
+        }
    // Show all data for Simpanan
 public function index(Request $request)
 {
@@ -47,6 +59,12 @@ public function index(Request $request)
     // Show the form for creating a new Simpanan
     public function create()
     {
+        $hakakses = $this->HakaksesLogin(Auth::id());
+
+        if (!$hakakses) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        } else {
+
         $user_id = Auth::id();
                $data = DB::table('users')
                 ->join('role_user', 'users.id', '=', 'role_user.user_id')
@@ -76,10 +94,16 @@ public function index(Request $request)
                 ->first();
         $sisa_saldo = $data->saldo_akhir;
         return view('admin.simpanan.create', compact('sisa_saldo'));
+                }
     }
 
     public function store(Request $request)
     {
+         $hakakses = $this->HakaksesLogin(Auth::id());
+
+        if (!$hakakses) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        } else {
         // Validasi awal
         $rules = [
             'nip' => 'required|string|max:50',
@@ -186,6 +210,7 @@ public function index(Request $request)
             return redirect()->back()->withInput()->withErrors('Gagal menyimpan data: ' . $e->getMessage());
         }
     }
+    }
 
 
 
@@ -231,6 +256,11 @@ public function show($id)
 // Show the form for editing the specified Simpanan
 public function edit($id)
 {
+     $hakakses = $this->HakaksesLogin(Auth::id());
+
+        if (!$hakakses) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        } else {
     // Cari Simpanan berdasarkan ID
     $simpanan = Simpanan::findOrFail($id);  // Mengambil Simpanan dengan ID yang sesuai
     $user_id = $simpanan->user_id;
@@ -264,9 +294,15 @@ public function edit($id)
         ->first();
         $sisa_saldo = $data->saldo_akhir;
     return view('admin.simpanan.edit', compact('simpanan','sisa_saldo'));
+        }
 }
 public function update(Request $request, $id)
 {
+     $hakakses = $this->HakaksesLogin(Auth::id());
+
+        if (!$hakakses) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        } else {
     // Gabungkan semua aturan validasi menjadi satu
     $rules = [
         'nip' => 'required|string|max:50',
@@ -377,12 +413,6 @@ public function update(Request $request, $id)
         return redirect()->back()->withInput()->withErrors('Gagal memperbarui data: ' . $e->getMessage());
     }
 }
+}
 
-
-    // Remove the specified Simpanan from storage
-    public function destroy(Simpanan $simpanan)
-    {
-        $simpanan->delete();
-        return redirect()->route('simpanan.index')->with('success', 'Simpanan berhasil dihapus!');
-    }
 }

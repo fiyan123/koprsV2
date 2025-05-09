@@ -89,7 +89,6 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
         Route::get('/', [PinjamanController::class, 'index'])->name('pinjaman.index');
         Route::get('create', [PinjamanController::class, 'create'])->name('pinjaman.create');
         Route::post('store', [PinjamanController::class, 'store'])->name('pinjaman.store');
-        Route::get('edit/{id}', [PinjamanController::class, 'edit'])->name('pinjaman.edit');
         Route::get('show/{id}', [PinjamanController::class, 'show'])->name('pinjaman.show');
         Route::get('bayar/{id}', [PinjamanController::class, 'bayar'])->name('pinjaman.bayar');
         Route::post('approve/{id}', [PinjamanController::class, 'approve'])->name('pinjaman.approve');
@@ -106,18 +105,8 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
         Route::get('edit/{id}', [SimpananController::class, 'edit'])->name('simpanan.edit');
         Route::get('show/{id}', [SimpananController::class, 'show'])->name('simpanan.show');
         Route::patch('update/{id}', [SimpananController::class, 'update'])->name('simpanan.update');
-        Route::post('destroy', [SimpananController::class, 'destroy'])->name('simpanan.destroy');
     });
 
-    Route::group(['prefix' => 'saldo'], function() {
-        Route::get('/', [SaldoController::class, 'index'])->name('saldo.index');
-        Route::get('create', [SaldoController::class, 'create'])->name('saldo.create');
-        Route::post('store', [SaldoController::class, 'store'])->name('saldo.store');
-        Route::get('edit/{id}', [SaldoController::class, 'edit'])->name('saldo.edit');
-        Route::get('show/{id}', [SaldoController::class, 'show'])->name('saldo.show');
-        Route::patch('update/{id}', [SaldoController::class, 'update'])->name('saldo.update');
-        Route::post('destroy', [SaldoController::class, 'destroy'])->name('saldo.destroy');
-    });
 
     Route::group(['prefix' => 'laporan'], function() {
         Route::get('/', [LaporanController::class, 'index'])->name('laporan');

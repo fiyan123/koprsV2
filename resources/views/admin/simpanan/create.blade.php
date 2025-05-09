@@ -3,7 +3,7 @@
 @section('title', 'Tambah Simpanan')
 
 @section('breadcrumb')
-  <x-dashboard.breadcrumb title="Tambah Simpanan" page="Dashboard" active="Tambah Simpanan" route="{{ route('dashboard') }}" />
+  <x-dashboard.breadcrumb title="Tambah Simpanan" page="Simpanan" active="Tambah Simpanan" route="{{ route('simpanan.index') }}" />
 @endsection
 
 @section('content')

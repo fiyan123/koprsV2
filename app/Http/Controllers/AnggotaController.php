@@ -7,6 +7,7 @@ use App\Models\Pinjaman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
@@ -14,8 +15,27 @@ use Illuminate\Support\Facades\Validator;
 
 class AnggotaController extends Controller
 {
+   public function HakaksesLogin($user_id)
+{
+    $user = DB::table('users')
+        ->join('role_user', 'users.id', '=', 'role_user.user_id')
+        ->join('roles', 'role_user.role_id', '=', 'roles.id')
+        ->where('users.id', $user_id)
+        ->where('roles.id', 3) // role_id 3 = anggota
+        ->select('users.id')
+        ->first();
+
+    return $user ? true : false;
+}
+
    public function index(Request $request)
 {
+   $hakakses = $this->HakaksesLogin(Auth::id());
+
+if ($hakakses) {
+    return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+} else {
+
     if ($request->ajax()) {
            $data = DB::table('users')
         ->join('role_user', 'users.id', '=', 'role_user.user_id')
@@ -61,15 +81,28 @@ class AnggotaController extends Controller
     return view('admin.anggota.index');
 }
 
+}
+
 
     public function create()
     {
+     $hakakses = $this->HakaksesLogin(Auth::id());
+
+        if ($hakakses) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        } else {
         return view('admin.anggota.create');
+        }
     }
 
 
     public function store(Request $request)
     {
+     $hakakses = $this->HakaksesLogin(Auth::id());
+
+if ($hakakses) {
+    return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+} else {
         Validator::extend('strong_password', function ($attribute, $value) {
             return preg_match('/[A-Z]/', $value) &&
                    preg_match('/[a-z]/', $value) &&
@@ -151,17 +184,29 @@ class AnggotaController extends Controller
 
             return redirect()->back()->withInput()->with('toast_error', 'Gagal menyimpan data: ' . $e->getMessage());
         }
+        }
     }
 
 
     public function edit($id)
     {
-        $user = User::findOrFail($id);
-        return view('admin.anggota.edit', compact('user'));
+        $hakakses = $this->HakaksesLogin(Auth::id());
+
+        if ($hakakses) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        } else {
+            $user = User::findOrFail($id);
+            return view('admin.anggota.edit', compact('user'));
+        }
     }
 
     public function show($id)
     {
+     $hakakses = $this->HakaksesLogin(Auth::id());
+
+        if ($hakakses) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        } else {
         // $user = User::findOrFail($id);
           $user = DB::table('users')
           ->where('users.id',$id)
@@ -190,10 +235,16 @@ class AnggotaController extends Controller
         ->groupBy('users.id')
         ->first();
         return view('admin.anggota.show', compact('user'));
+        }
     }
 
     public function update(Request $request, $id)
     {
+     $hakakses = $this->HakaksesLogin(Auth::id());
+
+        if ($hakakses) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        } else {
         $user = User::findOrFail($id);
         $request->validate([
             'name' => 'required',
@@ -212,12 +263,19 @@ class AnggotaController extends Controller
         ]);
 
         return redirect()->route('anggota.index')->with('success', 'Anggota berhasil diperbarui.');
+        }
     }
 
     public function destroy($id)
     {
-        User::findOrFail($id)->delete();
-        return redirect()->route('anggota.index')->with('success', 'Anggota berhasil dihapus.');
+     $hakakses = $this->HakaksesLogin(Auth::id());
+
+        if ($hakakses) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        } else {
+                User::findOrFail($id)->delete();
+                return redirect()->route('anggota.index')->with('success', 'Anggota berhasil dihapus.');
+        }
     }
 
 }
