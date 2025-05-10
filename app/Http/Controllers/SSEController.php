@@ -722,54 +722,54 @@ class SSEController extends Controller
     // }
 
 
-    public function TotalAllChart()
-    {
-        $response = new StreamedResponse(function () {
-            // Header SSE
+    // public function TotalAllChart()
+    // {
+    //     $response = new StreamedResponse(function () {
+    //         // Header SSE
 
-            $lastSentHash = null;
+    //         $lastSentHash = null;
 
-            while (true) {
-                try {
-                    $totalNasabah = $this->getTotalNasabah();
-                    $totalPinjaman = $this->getTotalPinjaman();
-                    $totalSimpanan = $this->getTotalSimpanan();
+    //         while (true) {
+    //             try {
+    //                 $totalNasabah = $this->getTotalNasabah();
+    //                 $totalPinjaman = $this->getTotalPinjaman();
+    //                 $totalSimpanan = $this->getTotalSimpanan();
 
-                    $currentData = [
-                        'get_total_nasabah' => $totalNasabah,
-                        'get_total_pinjaman' => $totalPinjaman,
-                        'get_total_simpanan' => $totalSimpanan,
-                    ];
+    //                 $currentData = [
+    //                     'get_total_nasabah' => $totalNasabah,
+    //                     'get_total_pinjaman' => $totalPinjaman,
+    //                     'get_total_simpanan' => $totalSimpanan,
+    //                 ];
 
-                    $currentHash = md5(json_encode($currentData));
+    //                 $currentHash = md5(json_encode($currentData));
 
-                    if ($lastSentHash !== $currentHash) {
-                        echo 'data: ' . json_encode($currentData) . "\n\n";
-                        $lastSentHash = $currentHash;
-                    }
+    //                 if ($lastSentHash !== $currentHash) {
+    //                     echo 'data: ' . json_encode($currentData) . "\n\n";
+    //                     $lastSentHash = $currentHash;
+    //                 }
 
-                    @ob_flush();
-                    @flush();
+    //                 @ob_flush();
+    //                 @flush();
 
-                    // Jika koneksi terputus dari client
-                    if (connection_aborted()) break;
-                } catch (\Exception $e) {
-                    echo "event: error\n";
-                    echo 'data: ' . json_encode(['error' => $e->getMessage()]) . "\n\n";
-                    @ob_flush();
-                    @flush();
-                    break;
-                }
+    //                 // Jika koneksi terputus dari client
+    //                 if (connection_aborted()) break;
+    //             } catch (\Exception $e) {
+    //                 echo "event: error\n";
+    //                 echo 'data: ' . json_encode(['error' => $e->getMessage()]) . "\n\n";
+    //                 @ob_flush();
+    //                 @flush();
+    //                 break;
+    //             }
 
-                sleep(1); // tunggu 1 detik
-            }
-        });
+    //             sleep(1); // tunggu 1 detik
+    //         }
+    //     });
 
-        // Set header untuk SSE
-        $response->headers->set('Content-Type', 'text/event-stream');
-        $response->headers->set('Cache-Control', 'no-cache');
-        $response->headers->set('Connection', 'keep-alive');
+    //     // Set header untuk SSE
+    //     $response->headers->set('Content-Type', 'text/event-stream');
+    //     $response->headers->set('Cache-Control', 'no-cache');
+    //     $response->headers->set('Connection', 'keep-alive');
 
-        return $response;
-    }
+    //     return $response;
+    // }
 }

@@ -49,9 +49,9 @@ Route::post('/logout', function () {
 Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
 
     Route::group(['prefix' => 'sse'], function() {
-        Route::get('TotalAllChart', [SSEController::class, 'TotalAllChart'])->name('TotalAllChart');
+        // Route::get('TotalAllChart', [SSEController::class, 'TotalAllChart'])->name('TotalAllChart');
         // Route::get('getTotalPinjaman', [SSEController::class, 'getTotalPinjaman'])->name('getTotalPinjaman');
-        Route::get('dendaPinjamanSSE', [SSEController::class, 'dendaPinjamanSSE'])->name('dendaPinjamanSSE');
+        // Route::get('dendaPinjamanSSE', [SSEController::class, 'dendaPinjamanSSE'])->name('dendaPinjamanSSE');
         Route::get('denda_pinjaman', [SSEController::class, 'denda_pinjaman'])->name('denda_pinjaman');
         Route::get('getlaporan', [SSEController::class, 'getlaporan'])->name('getlaporan');
         Route::get('getlaporanSimpan', [SSEController::class, 'getlaporanSimpan'])->name('getlaporanSimpan');
